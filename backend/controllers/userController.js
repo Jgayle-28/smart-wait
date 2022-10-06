@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler")
 const bcrypt = require("bcryptjs")
-const { generateToken } = require("../helpers/auth")
+const { generateToken, userHasPermissions } = require("../helpers/auth")
 
 const User = require("../models/userModel")
 
@@ -9,7 +9,7 @@ const User = require("../models/userModel")
  */
 
 // @desc register a new user
-// @route /api/users
+// @route POST /api/users
 // @access Public
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body
@@ -51,7 +51,7 @@ const registerUser = asyncHandler(async (req, res) => {
 })
 
 // @desc login user
-// @route /api/users/login
+// @route POST /api/users/login
 // @access Public
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body
@@ -73,7 +73,7 @@ const loginUser = asyncHandler(async (req, res) => {
 })
 
 // @desc get current user
-// @route /api/users/currentUser
+// @route GET /api/users/currentUser
 // @access Private
 const getCurrentUser = asyncHandler(async (req, res) => {
   const { user } = req
@@ -85,8 +85,44 @@ const getCurrentUser = asyncHandler(async (req, res) => {
   }
 })
 
+// @desc get all APPLICATION users
+// @route GET /api/users/
+// @access Private
+const getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find({})
+  if (users) {
+    res.status(200).json(users)
+  } else {
+    res.status(500).json({ message: `Error fetching users, please try again` })
+  }
+})
+
+// @desc delete user by id
+// @route DELETE /api/users/:id
+// @access Private
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id)
+  const canDelete = userHasPermissions(req.user.role)
+
+  if (!user) {
+    res.status(404)
+    throw new Error("User Not found")
+  }
+  // Make sure user is super-admin OR admin
+  if (canDelete) {
+    res.status(404)
+    throw new Error("Not authorized to perform this action")
+  }
+
+  // If authorized and user is found remove the user
+  await user.remove()
+  res.status(200).json({ success: true, message: "User deleted" })
+})
+
 module.exports = {
   registerUser,
   loginUser,
+  getUsers,
   getCurrentUser,
+  deleteUser,
 }
