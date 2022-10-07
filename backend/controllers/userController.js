@@ -93,7 +93,7 @@ const getUsers = asyncHandler(async (req, res) => {
   if (users) {
     res.status(200).json(users)
   } else {
-    res.status(500).json({ message: `Error fetching users, please try again` })
+    res.status(400).json({ message: `Error fetching users, please try again` })
   }
 })
 
@@ -109,7 +109,7 @@ const deleteUser = asyncHandler(async (req, res) => {
     throw new Error("User Not found")
   }
   // Make sure user is super-admin OR admin
-  if (canDelete) {
+  if (!canDelete) {
     res.status(404)
     throw new Error("Not authorized to perform this action")
   }

@@ -22,6 +22,7 @@ app.use(express.urlencoded({ extended: false }))
  */
 app.get("/", (req, res) => res.status(200).send("Hola Amigo"))
 app.use("/api/users", require("./routes/userRoutes"))
+app.use("/api/patients", require("./routes/patientRoutes"))
 
 /**
  * Middleware
