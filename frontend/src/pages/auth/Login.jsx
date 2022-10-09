@@ -50,7 +50,6 @@ function Login() {
       .unwrap()
       .then(() => {
         setFormData(initialFormValues)
-        // TODO - change to useNotification() system hook
         navigate('/')
       })
       .catch((error) =>

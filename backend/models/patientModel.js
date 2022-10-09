@@ -1,20 +1,25 @@
-const mongoose = require("mongoose")
+const mongoose = require('mongoose')
 
 const patientSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Please enter a patient name"],
+      required: [true, 'Please enter a patient name'],
     },
     email: {
       type: String,
       required: false,
-      default: "",
+      default: '',
+    },
+    phoneNumber: {
+      type: Number,
+      required: false,
+      default: '',
     },
     patientDescription: {
       type: String,
       required: false,
-      default: "",
+      default: '',
     },
     patientCheckedIn: {
       type: Boolean,
@@ -33,11 +38,11 @@ const patientSchema = mongoose.Schema(
     },
     addedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
   },
   { timestamps: true }
 )
 
-module.exports = mongoose.model("Patient", patientSchema)
+module.exports = mongoose.model('Patient', patientSchema)

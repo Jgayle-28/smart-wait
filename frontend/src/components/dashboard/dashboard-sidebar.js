@@ -44,7 +44,14 @@ export const DashboardSidebar = (props) => {
         }}
       >
         <div>
-          <Box sx={{ p: 3 }}>
+          <Box
+            sx={{
+              p: 3,
+              display: 'flex',
+              justifyItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <Link to='/'>
               <Logo
                 sx={{
@@ -69,10 +76,10 @@ export const DashboardSidebar = (props) => {
             >
               <div>
                 <Typography color='inherit' variant='subtitle1'>
-                  Acme Inc
+                  Pinal County Health
                 </Typography>
                 <Typography color='neutral.400' variant='body2'>
-                  Your tier : Premium
+                  Office : 1
                 </Typography>
               </div>
               <SelectorIcon

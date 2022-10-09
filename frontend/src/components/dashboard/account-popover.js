@@ -1,12 +1,18 @@
-import { useContext } from 'react'
-
+import { useDispatch } from 'react-redux'
+import { logoutUser } from 'store/auth/authSlice'
 import PropTypes from 'prop-types'
 import { Box, MenuItem, MenuList, Popover, Typography } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open, ...other } = props
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  const handleSignOut = () => {}
+  const handleSignOut = () => {
+    dispatch(logoutUser())
+    navigate('/login')
+  }
 
   return (
     <Popover
