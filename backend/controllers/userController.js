@@ -1,8 +1,8 @@
-const asyncHandler = require("express-async-handler")
-const bcrypt = require("bcryptjs")
-const { generateToken, userHasPermissions } = require("../helpers/auth")
+const asyncHandler = require('express-async-handler')
+const bcrypt = require('bcryptjs')
+const { generateToken, userHasPermissions } = require('../helpers/auth')
 
-const User = require("../models/userModel")
+const User = require('../models/userModel')
 
 /**
  * This is the controller for the APP USERS NOT PATIENTS
@@ -17,8 +17,8 @@ const registerUser = asyncHandler(async (req, res) => {
   if (!name || !email || !password) {
     res.status(400)
     throw new Error(
-      `Please include -> ${!name ? "name" : ""} ${!email ? "email" : ""} ${
-        !password ? "password" : ""
+      `Please include -> ${!name ? 'name' : ''} ${!email ? 'email' : ''} ${
+        !password ? 'password' : ''
       }`
     )
   }
@@ -27,7 +27,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const userExists = await User.findOne({ email })
   if (userExists) {
     res.status(400)
-    throw new Error("User already exists")
+    throw new Error('User with that email already exists')
   }
 
   // Hash Password
@@ -46,7 +46,7 @@ const registerUser = asyncHandler(async (req, res) => {
     })
   } else {
     res.status(400)
-    throw new Error("Invalid user data")
+    throw new Error('Invalid user data')
   }
 })
 
@@ -64,11 +64,13 @@ const loginUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      role: user.role,
+      isAdmin: user.isAdmin,
       token: generateToken(user._id),
     })
   } else {
     res.status(401)
-    throw new Error("Invalid credentials")
+    throw new Error('Invalid credentials')
   }
 })
 
@@ -81,7 +83,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     res.status(200).json(user)
   } else {
     res.status(401)
-    throw new Error("Problem verifying token")
+    throw new Error('Problem verifying token')
   }
 })
 
@@ -106,17 +108,17 @@ const deleteUser = asyncHandler(async (req, res) => {
 
   if (!user) {
     res.status(404)
-    throw new Error("User Not found")
+    throw new Error('User Not found')
   }
   // Make sure user is super-admin OR admin
   if (!canDelete) {
     res.status(404)
-    throw new Error("Not authorized to perform this action")
+    throw new Error('Not authorized to perform this action')
   }
 
   // If authorized and user is found remove the user
   await user.remove()
-  res.status(200).json({ success: true, message: "User deleted" })
+  res.status(200).json({ success: true, message: 'User deleted' })
 })
 
 module.exports = {

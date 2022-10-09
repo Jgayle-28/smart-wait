@@ -1,32 +1,35 @@
-import { useState } from "react"
-import Button from "@mui/material/Button"
-import CssBaseline from "@mui/material/CssBaseline"
-import TextField from "@mui/material/TextField"
-import Box from "@mui/material/Box"
-import Typography from "@mui/material/Typography"
-import Container from "@mui/material/Container"
-import InputLabel from "@mui/material/InputLabel"
-import MenuItem from "@mui/material/MenuItem"
-import FormControl from "@mui/material/FormControl"
-import Select from "@mui/material/Select"
-import Alert from "@mui/material/Alert"
-import { Logo } from "components/logo"
+import { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { createUser } from 'store/auth/authSlice'
+// MUI
+import LoadingButton from '@mui/lab/LoadingButton'
+import CssBaseline from '@mui/material/CssBaseline'
+import TextField from '@mui/material/TextField'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import Container from '@mui/material/Container'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import FormControl from '@mui/material/FormControl'
+import Select from '@mui/material/Select'
+import Alert from '@mui/material/Alert'
+import { Logo } from 'components/logo'
 
 const initialFormValues = {
-  name: "",
-  email: "",
-  role: "user",
+  name: '',
+  email: '',
+  role: 'user',
   isAdmin: false,
-  password: "",
-  confirmPassword: "",
+  password: '',
+  confirmPassword: '',
 }
 
 function CreateUser() {
+  const { isLoading } = useSelector((state) => state.auth)
+  const dispatch = useDispatch()
+
   const [formData, setFormData] = useState(initialFormValues)
-  const [formFeedback, setFormFeedback] = useState({
-    type: "error",
-    message: "This is an error alert — check it out YO!",
-  })
+  const [formFeedback, setFormFeedback] = useState(null)
 
   const { name, email, role, password, confirmPassword } = formData
 
@@ -37,34 +40,39 @@ function CreateUser() {
     }))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    // Reset the form feed back if any
+    // Reset the form feed back if any Errors
     if (formFeedback) setFormFeedback(null)
 
-    const tempData = { ...formData }
+    const userData = { ...formData }
 
     if (password !== confirmPassword) {
       return setFormFeedback({
-        type: "error",
-        message: "Passwords do not match.",
+        type: 'error',
+        message: 'Passwords do not match.',
       })
     }
 
-    delete tempData.confirmPassword
-    tempData.isAdmin = tempData.role === "admin" ? true : false
+    delete userData.confirmPassword
+    userData.isAdmin = userData.role === 'admin' ? true : false
 
-    try {
-      // Call api
-      setFormData(initialFormValues)
-    } catch (error) {
-      setFormFeedback({
-        type: "error",
-        message: "Error creating user, please try again.",
+    dispatch(createUser(userData))
+      .unwrap()
+      .then(() => {
+        setFormData(initialFormValues)
+        // TODO - change to useNotification() system hook
+        setFormFeedback({
+          type: 'success',
+          message: 'User Created',
+        })
       })
-    }
-
-    console.log("tempData :>> ", tempData)
+      .catch((error) =>
+        setFormFeedback({
+          type: 'error',
+          message: error,
+        })
+      )
   }
   return (
     <div>
@@ -72,9 +80,9 @@ function CreateUser() {
         <CssBaseline />
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
             marginTop: 12,
           }}
         >
@@ -83,7 +91,7 @@ function CreateUser() {
             Create User
           </Typography>
           {formFeedback && (
-            <Box mt={4} sx={{ width: "100%" }}>
+            <Box mt={4} sx={{ width: '100%' }}>
               <Alert severity={formFeedback.type}>{formFeedback.message}</Alert>
             </Box>
           )}
@@ -149,17 +157,18 @@ function CreateUser() {
               value={confirmPassword}
               onChange={handleChange}
             />
-            <Button
+            <LoadingButton
+              loading={isLoading}
+              loadingPosition='start'
               type='submit'
               fullWidth
               variant='contained'
               sx={{ mt: 3, mb: 2 }}
             >
               Create New User
-            </Button>
+            </LoadingButton>
           </Box>
         </Box>
-        {/* <Copyright /> */}
       </Container>
     </div>
   )

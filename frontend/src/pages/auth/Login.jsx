@@ -1,30 +1,36 @@
-import { useState } from "react"
-import Button from "@mui/material/Button"
-import CssBaseline from "@mui/material/CssBaseline"
-import TextField from "@mui/material/TextField"
-import Box from "@mui/material/Box"
-import Typography from "@mui/material/Typography"
-import Container from "@mui/material/Container"
-import InputLabel from "@mui/material/InputLabel"
-import MenuItem from "@mui/material/MenuItem"
-import FormControl from "@mui/material/FormControl"
-import Select from "@mui/material/Select"
-import Alert from "@mui/material/Alert"
-import { Logo } from "components/logo"
+import { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { loginUser } from 'store/auth/authSlice'
+import { useNavigate } from 'react-router-dom'
+// MUI
+import LoadingButton from '@mui/lab/LoadingButton'
+import CssBaseline from '@mui/material/CssBaseline'
+import TextField from '@mui/material/TextField'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import Container from '@mui/material/Container'
+import Alert from '@mui/material/Alert'
+import { Logo } from 'components/logo'
 
 const initialFormValues = {
-  name: "",
-  email: "",
+  email: '',
+  password: '',
 }
 
 function Login() {
-  const [formData, setFormData] = useState(initialFormValues)
-  const [formFeedback, setFormFeedback] = useState({
-    type: "error",
-    message: "This is an error alert — check it out YO!",
-  })
+  const { user, isLoading } = useSelector((state) => state.auth)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  const { name, email, role, password, confirmPassword } = formData
+  const [formData, setFormData] = useState(initialFormValues)
+  const [formFeedback, setFormFeedback] = useState()
+
+  const { email, password } = formData
+
+  // If the user is logged in take them to dashboard
+  useEffect(() => {
+    if (user) navigate('/')
+  }, [user])
 
   const handleChange = (e) => {
     setFormData((prevState) => ({
@@ -33,34 +39,26 @@ function Login() {
     }))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    // Reset the form feed back if any
+    // Reset the form feed back if any Errors
     if (formFeedback) setFormFeedback(null)
 
-    const tempData = { ...formData }
+    const userData = { ...formData }
 
-    if (password !== confirmPassword) {
-      return setFormFeedback({
-        type: "error",
-        message: "Passwords do not match.",
+    dispatch(loginUser(userData))
+      .unwrap()
+      .then(() => {
+        setFormData(initialFormValues)
+        // TODO - change to useNotification() system hook
+        navigate('/')
       })
-    }
-
-    delete tempData.confirmPassword
-    tempData.isAdmin = tempData.role === "admin" ? true : false
-
-    try {
-      // Call api
-      setFormData(initialFormValues)
-    } catch (error) {
-      setFormFeedback({
-        type: "error",
-        message: "Error creating user, please try again.",
-      })
-    }
-
-    console.log("tempData :>> ", tempData)
+      .catch((error) =>
+        setFormFeedback({
+          type: 'error',
+          message: error,
+        })
+      )
   }
   return (
     <div>
@@ -68,18 +66,19 @@ function Login() {
         <CssBaseline />
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
             marginTop: 12,
           }}
         >
           <Logo />
           <Typography component='h1' variant='h5'>
-            Create User
+            Smart Wait
           </Typography>
+
           {formFeedback && (
-            <Box mt={4} sx={{ width: "100%" }}>
+            <Box mt={4} sx={{ width: '100%' }}>
               <Alert severity={formFeedback.type}>{formFeedback.message}</Alert>
             </Box>
           )}
@@ -93,33 +92,35 @@ function Login() {
               margin='normal'
               required
               fullWidth
-              id='name'
-              label='Name'
-              name='name'
-              value={name}
-              onChange={handleChange}
-            />
-            <TextField
-              margin='normal'
-              required
-              fullWidth
               id='email'
               label='Email'
               name='email'
               value={email}
               onChange={handleChange}
             />
-            <Button
+            <TextField
+              margin='normal'
+              required
+              fullWidth
+              name='password'
+              label='Password'
+              type='password'
+              id='password'
+              value={password}
+              onChange={handleChange}
+            />
+            <LoadingButton
+              loading={isLoading}
+              loadingPosition='start'
               type='submit'
               fullWidth
               variant='contained'
               sx={{ mt: 3, mb: 2 }}
             >
-              Create New User
-            </Button>
+              Login
+            </LoadingButton>
           </Box>
         </Box>
-        {/* <Copyright /> */}
       </Container>
     </div>
   )
