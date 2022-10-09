@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { logoutUser } from 'store/auth/authSlice'
 import PropTypes from 'prop-types'
 import { Box, MenuItem, MenuList, Popover, Typography } from '@mui/material'
@@ -8,9 +8,10 @@ export const AccountPopover = (props) => {
   const { anchorEl, onClose, open, ...other } = props
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const { user } = useSelector((state) => state.auth)
 
-  const handleSignOut = () => {
-    dispatch(logoutUser())
+  const handleSignOut = async () => {
+    await dispatch(logoutUser())
     navigate('/login')
   }
 
@@ -36,7 +37,7 @@ export const AccountPopover = (props) => {
       >
         <Typography variant='overline'>Account</Typography>
         <Typography color='text.secondary' variant='body2'>
-          John Doe
+          {user.name}
         </Typography>
       </Box>
       <MenuList

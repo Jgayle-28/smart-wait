@@ -2,11 +2,13 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Box, Divider, Drawer, Typography, useMediaQuery } from '@mui/material'
 import { ChartBar as ChartBarIcon } from 'icons/chart-bar'
+import { NavItem } from 'components/dashboard/nav-item'
+// Icons
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import { Cog as CogIcon } from 'icons/cog'
 import { Selector as SelectorIcon } from 'icons/selector'
 import { Users as UsersIcon } from 'icons/users'
 import { Logo } from 'components/logo'
-import { NavItem } from 'components/dashboard/nav-item'
 
 const items = [
   {
@@ -20,8 +22,13 @@ const items = [
     title: 'Patients',
   },
   {
-    href: '/admin',
+    href: '/settings',
     icon: <CogIcon fontSize='small' />,
+    title: 'Settings',
+  },
+  {
+    href: '/admin',
+    icon: <AdminPanelSettingsIcon fontSize='small' />,
     title: 'Admin',
   },
 ]

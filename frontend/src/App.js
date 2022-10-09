@@ -7,6 +7,7 @@ import Dashboard from 'layouts/dashboard/Dashboard'
 import Admin from 'pages/admin/Admin.page'
 import Appointments from 'pages/appointments/Appointment.page'
 import Patients from 'pages/patients/Patients.page'
+import Settings from 'pages/settings/Settings.page'
 
 function App() {
   return (
@@ -16,9 +17,10 @@ function App() {
           <Route path='/' element={<PrivateRoute />}>
             {/* Dashboard layout wraps all nested route for main app views*/}
             <Route path='/' element={<Dashboard />}>
-              <Route path='/admin' element={<Admin />} />
-              <Route path='/appointments' element={<Appointments />} />
               <Route path='/patients' element={<Patients />} />
+              <Route path='/appointments' element={<Appointments />} />
+              <Route path='/settings' element={<Settings />} />
+              <Route path='/admin' element={<Admin />} />
             </Route>
           </Route>
           <Route path='/login' element={<Login />} />

@@ -14,7 +14,7 @@ function UserList() {
       <Card>
         <CardHeader
           subheader='Manage application users'
-          title='Application User'
+          title='Application Users'
         />
         <Divider />
         <CardContent>
