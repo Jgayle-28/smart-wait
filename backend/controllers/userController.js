@@ -99,6 +99,24 @@ const getUsers = asyncHandler(async (req, res) => {
   }
 })
 
+// @desc update a patient by id
+// @route PUT /api/patients/:id
+// @access Private
+const updateUser = asyncHandler(async (req, res) => {
+  // Make sure user exists
+  const user = await User.findById(req.params.id)
+
+  if (!user) {
+    res.status(404)
+    throw new Error('User not found')
+  }
+  // Update and return new patient
+  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  })
+  res.status(200).json(updatedUser)
+})
+
 // @desc delete user by id
 // @route DELETE /api/users/:id
 // @access Private
@@ -118,7 +136,9 @@ const deleteUser = asyncHandler(async (req, res) => {
 
   // If authorized and user is found remove the user
   await user.remove()
-  res.status(200).json({ success: true, message: 'User deleted' })
+  res
+    .status(200)
+    .json({ success: true, message: 'User deleted', userId: req.params.id })
 })
 
 module.exports = {
@@ -126,5 +146,6 @@ module.exports = {
   loginUser,
   getUsers,
   getCurrentUser,
+  updateUser,
   deleteUser,
 }

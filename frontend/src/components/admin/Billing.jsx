@@ -8,13 +8,13 @@ import {
   TextField,
 } from '@mui/material'
 
-function UserList() {
+function Billing() {
   return (
     <>
       <Card>
         <CardHeader
-          subheader='Manage application users'
-          title='Application Users'
+          subheader='Current subscription and billing information'
+          title='Subscription'
         />
         <Divider />
         <CardContent>
@@ -25,4 +25,4 @@ function UserList() {
   )
 }
 
-export default UserList
+export default Billing

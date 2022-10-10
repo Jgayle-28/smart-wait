@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { createUser } from 'store/auth/authSlice'
 // MUI
@@ -20,6 +20,7 @@ import Select from '@mui/material/Select'
 import Alert from '@mui/material/Alert'
 import { Logo } from 'components/logo'
 import { useNotification } from 'hooks/useNotification'
+import { updateUser } from 'store/admin/adminSlice'
 
 const initialFormValues = {
   name: '',
@@ -30,7 +31,7 @@ const initialFormValues = {
   confirmPassword: '',
 }
 
-function CreateUser() {
+function CreateUser({ user = null, callBack }) {
   const { isLoading } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
   const { displayNotification } = useNotification()
@@ -39,6 +40,10 @@ function CreateUser() {
   const [formFeedback, setFormFeedback] = useState(null)
 
   const { name, email, role, password, confirmPassword } = formData
+
+  useEffect(() => {
+    if (user !== null) setFormData(user)
+  }, [user])
 
   const handleChange = (e) => {
     setFormData((prevState) => ({
@@ -55,7 +60,7 @@ function CreateUser() {
 
     const userData = { ...formData }
 
-    if (password !== confirmPassword) {
+    if (!user && password !== confirmPassword) {
       return setFormFeedback({
         type: 'error',
         message: 'Passwords do not match.',
@@ -64,22 +69,41 @@ function CreateUser() {
 
     delete userData.confirmPassword
     userData.isAdmin = userData.role === 'admin' ? true : false
-
-    dispatch(createUser(userData))
-      .unwrap()
-      .then(() => {
-        setFormData(initialFormValues)
-        displayNotification({
-          message: 'New user has been created',
-          type: 'success',
+    if (user) {
+      dispatch(updateUser(userData))
+        .unwrap()
+        .then(() => {
+          setFormData(initialFormValues)
+          callBack()
+          displayNotification({
+            message: 'User has been updated',
+            type: 'success',
+          })
         })
-      })
-      .catch((error) =>
-        setFormFeedback({
-          type: 'error',
-          message: error,
+        .catch((error) =>
+          setFormFeedback({
+            type: 'error',
+            message: error,
+          })
+        )
+    } else {
+      dispatch(createUser(userData))
+        .unwrap()
+        .then(() => {
+          setFormData(initialFormValues)
+          callBack()
+          displayNotification({
+            message: 'New user has been created',
+            type: 'success',
+          })
         })
-      )
+        .catch((error) =>
+          setFormFeedback({
+            type: 'error',
+            message: error,
+          })
+        )
+    }
   }
   return (
     <Card>
@@ -126,37 +150,43 @@ function CreateUser() {
               </Select>
             </FormControl>
           </Box>
-          <TextField
-            margin='normal'
-            required
-            fullWidth
-            name='password'
-            label='Password'
-            type='password'
-            id='password'
-            value={password}
-            onChange={handleChange}
-          />
-          <TextField
-            margin='normal'
-            required
-            fullWidth
-            name='confirmPassword'
-            label='Confirm Password'
-            type='password'
-            id='confirmPassword'
-            value={confirmPassword}
-            onChange={handleChange}
-          />
+          {user === null && (
+            <>
+              <TextField
+                margin='normal'
+                required
+                fullWidth
+                name='password'
+                label='Password'
+                type='password'
+                id='password'
+                value={password}
+                onChange={handleChange}
+              />
+              <TextField
+                margin='normal'
+                required
+                fullWidth
+                name='confirmPassword'
+                label='Confirm Password'
+                type='password'
+                id='confirmPassword'
+                value={confirmPassword}
+                onChange={handleChange}
+              />
+            </>
+          )}
+
           <LoadingButton
             loading={isLoading}
+            startIcon={<></>}
             loadingPosition='start'
             type='submit'
             fullWidth
             variant='contained'
             sx={{ mt: 3, mb: 2 }}
           >
-            Create New User
+            {user !== null ? 'Update User' : 'Create New User'}
           </LoadingButton>
         </Box>
       </CardContent>

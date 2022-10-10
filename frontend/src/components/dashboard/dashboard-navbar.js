@@ -72,7 +72,7 @@ export const DashboardNavbar = (props) => {
           </Tooltip>
           <Tooltip title='Notifications'>
             <IconButton sx={{ ml: 1 }}>
-              <Badge badgeContent={4} color='primary' variant='dot'>
+              <Badge badgeContent={4} color='secondary' variant='dot'>
                 <BellIcon fontSize='small' />
               </Badge>
             </IconButton>
@@ -81,6 +81,7 @@ export const DashboardNavbar = (props) => {
             onClick={() => setOpenAccountPopover(true)}
             ref={settingsRef}
             sx={{
+              bgcolor: 'primary.main',
               cursor: 'pointer',
               height: 40,
               width: 40,
