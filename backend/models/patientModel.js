@@ -8,13 +8,26 @@ const patientSchema = mongoose.Schema(
     },
     email: {
       type: String,
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        'Please add a valid email',
+      ],
+    },
+    dob: {
+      type: Date,
       required: false,
-      default: '',
+      default: null,
     },
     phoneNumber: {
-      type: Number,
+      type: string,
       required: false,
+      maxlength: [20, 'Phone number can not be longer than 20 characters'],
       default: '',
+    },
+    address: {
+      type: Object,
+      default: null,
+      required: [false, 'Please add an address'],
     },
     patientDescription: {
       type: String,
