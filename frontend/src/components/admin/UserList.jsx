@@ -21,7 +21,7 @@ import { Plus as PlusIcon } from 'icons/plus'
 import { PencilAlt as PencilAltIcon } from 'icons/pencil-alt'
 import ShieldIcon from '@mui/icons-material/Shield'
 import Modal from 'components/shared/Modal'
-import CreateUser from '../CreateUser'
+import CreateUser from './CreateUser'
 
 function UserList() {
   const dispatch = useDispatch()

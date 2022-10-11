@@ -1,6 +1,6 @@
 import { Box, Container, Typography, Grid } from '@mui/material'
 import Billing from 'components/admin/Billing'
-import UserList from 'components/admin/user-list/UserList'
+import UserList from 'components/admin/UserList'
 function Admin() {
   return (
     <>
@@ -19,7 +19,6 @@ function Admin() {
             <Grid item xs={12} md={6}>
               <UserList />
             </Grid>
-
             <Grid item xs={12} md={6}>
               <Billing />
             </Grid>
