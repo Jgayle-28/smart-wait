@@ -4,6 +4,7 @@ import { DashboardNavbar } from 'components/dashboard/dashboard-navbar'
 import { DashboardSidebar } from 'components/dashboard/dashboard-sidebar'
 import styled from '@emotion/styled'
 import { Box } from '@mui/material'
+import AuthGuard from 'components/auth/AuthGuard'
 
 const DashboardLayoutRoot = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -29,7 +30,9 @@ function Dashboard() {
           }}
         >
           <main>
-            <Outlet />
+            <AuthGuard>
+              <Outlet />
+            </AuthGuard>
           </main>
         </Box>
       </DashboardLayoutRoot>

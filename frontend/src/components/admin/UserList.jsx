@@ -58,7 +58,7 @@ function UserList() {
     <>
       <Card>
         <CardHeader
-          subheader='Manage application users'
+          subheader='Manage Smart Wait users'
           title='Application Users'
         />
         <Divider />

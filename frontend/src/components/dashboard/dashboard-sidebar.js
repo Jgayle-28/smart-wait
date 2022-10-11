@@ -1,40 +1,36 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Box, Divider, Drawer, Typography, useMediaQuery } from '@mui/material'
-import { ChartBar as ChartBarIcon } from 'icons/chart-bar'
+
 import { NavItem } from 'components/dashboard/nav-item'
 // Icons
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
-import { Cog as CogIcon } from 'icons/cog'
-import { Selector as SelectorIcon } from 'icons/selector'
-import { Users as UsersIcon } from 'icons/users'
-import { Logo } from 'components/logo'
 
-const items = [
-  {
-    href: '/',
-    icon: <ChartBarIcon fontSize='small' />,
-    title: 'Dashboard',
-  },
-  {
-    href: '/patients',
-    icon: <UsersIcon fontSize='small' />,
-    title: 'Patients',
-  },
-  {
-    href: '/settings',
-    icon: <CogIcon fontSize='small' />,
-    title: 'Settings',
-  },
-  {
-    href: '/admin',
-    icon: <AdminPanelSettingsIcon fontSize='small' />,
-    title: 'Admin',
-  },
-]
+import { Selector as SelectorIcon } from 'icons/selector'
+
+import { Logo } from 'components/logo'
+import { routes } from 'routes/user-routes'
+import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
 
 export const DashboardSidebar = (props) => {
   const { open, onClose } = props
+  const { user } = useSelector((state) => state.auth)
+
+  const [userRoutes, setUserRoutes] = useState(routes)
+
+  useEffect(() => {
+    if (user.isAdmin) {
+      let tempRoutes = [...userRoutes]
+      tempRoutes.push({
+        href: '/admin',
+        icon: <AdminPanelSettingsIcon fontSize='small' />,
+        title: 'Admin',
+      })
+      setUserRoutes(tempRoutes)
+    }
+  }, [user])
 
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'), {
     defaultMatches: true,
@@ -106,7 +102,7 @@ export const DashboardSidebar = (props) => {
           }}
         />
         <Box sx={{ flexGrow: 1 }}>
-          {items.map((item) => (
+          {userRoutes.map((item) => (
             <NavItem
               key={item.title}
               icon={item.icon}

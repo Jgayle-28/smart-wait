@@ -10,8 +10,8 @@ export const AccountPopover = (props) => {
   const navigate = useNavigate()
   const { user } = useSelector((state) => state.auth)
 
-  const handleSignOut = async () => {
-    await dispatch(logoutUser())
+  const handleSignOut = () => {
+    dispatch(logoutUser())
     navigate('/login')
   }
 
