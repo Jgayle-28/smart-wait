@@ -40,12 +40,13 @@ function UserList() {
   }, [users])
 
   const toggleModal = () => {
+    // This clears a user if the modal is closed
+    if (selectedUser !== null) setSelectedUser(null)
     setUserModalOpen((prevState) => !prevState)
   }
 
   const userModalCallback = () => {
     dispatch(getUsers())
-    if (selectedUser !== null) setSelectedUser(null)
     toggleModal()
   }
 

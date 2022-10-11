@@ -12,15 +12,14 @@ import {
   TextField,
 } from '@mui/material'
 import LoadingButton from '@mui/lab/LoadingButton'
-import Typography from '@mui/material/Typography'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
 import Alert from '@mui/material/Alert'
-import { Logo } from 'components/logo'
+import { Trash as TrashIcon } from 'icons/trash'
 import { useNotification } from 'hooks/useNotification'
-import { updateUser } from 'store/admin/adminSlice'
+import { deleteUser, updateUser } from 'store/admin/adminSlice'
 
 const initialFormValues = {
   name: '',
@@ -42,7 +41,12 @@ function CreateUser({ user = null, callBack }) {
   const { name, email, role, password, confirmPassword } = formData
 
   useEffect(() => {
-    if (user !== null) setFormData(user)
+    if (user !== null) {
+      const tempUser = { ...user }
+      delete tempUser.password
+      setFormData(tempUser)
+    }
+    return () => setFormData(initialFormValues)
   }, [user])
 
   const handleChange = (e) => {
@@ -69,6 +73,7 @@ function CreateUser({ user = null, callBack }) {
 
     delete userData.confirmPassword
     userData.isAdmin = userData.role === 'admin' ? true : false
+
     if (user) {
       dispatch(updateUser(userData))
         .unwrap()
@@ -105,92 +110,132 @@ function CreateUser({ user = null, callBack }) {
         )
     }
   }
+
+  const handleUserDelete = () => {
+    // The user comes from passed in user
+    dispatch(deleteUser(user._id))
+      .unwrap()
+      .then(() => {
+        setFormData(initialFormValues)
+        callBack()
+        displayNotification({
+          message: 'User has been deleted',
+          type: 'info',
+        })
+      })
+      .catch((error) =>
+        setFormFeedback({
+          type: 'error',
+          message: error,
+        })
+      )
+  }
+
   return (
-    <Card>
-      <CardHeader subheader='Add new application users' title='Create User' />
-      <Divider />
-      <CardContent>
-        {formFeedback && (
-          <Box mt={4} sx={{ width: '100%' }}>
-            <Alert severity={formFeedback.type}>{formFeedback.message}</Alert>
-          </Box>
-        )}
-        <Box component='form' onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            margin='normal'
-            required
-            fullWidth
-            id='name'
-            label='Name'
-            name='name'
-            value={name}
-            onChange={handleChange}
-          />
-          <TextField
-            margin='normal'
-            required
-            fullWidth
-            id='email'
-            label='Email'
-            name='email'
-            value={email}
-            onChange={handleChange}
-          />
-          <Box mt={2}>
-            <FormControl fullWidth>
-              <InputLabel>User Role</InputLabel>
-              <Select
-                name='role'
-                value={role}
-                label='User Role'
-                onChange={handleChange}
-              >
-                <MenuItem value='user'>Application User</MenuItem>
-                <MenuItem value='admin'>Application Admin</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-          {user === null && (
-            <>
-              <TextField
-                margin='normal'
-                required
-                fullWidth
-                name='password'
-                label='Password'
-                type='password'
-                id='password'
-                value={password}
-                onChange={handleChange}
-              />
-              <TextField
-                margin='normal'
-                required
-                fullWidth
-                name='confirmPassword'
-                label='Confirm Password'
-                type='password'
-                id='confirmPassword'
-                value={confirmPassword}
-                onChange={handleChange}
-              />
-            </>
+    <>
+      <Card>
+        <CardHeader subheader='Add new application users' title='Create User' />
+        <Divider />
+        <CardContent>
+          {formFeedback && (
+            <Box mt={4} sx={{ width: '100%' }}>
+              <Alert severity={formFeedback.type}>{formFeedback.message}</Alert>
+            </Box>
+          )}
+          {user && (
+            <Button
+              startIcon={<TrashIcon fontSize='small' />}
+              sx={{ mt: 2 }}
+              variant='outlined'
+              color='error'
+              onClick={handleUserDelete}
+            >
+              Delete user
+            </Button>
           )}
 
-          <LoadingButton
-            loading={isLoading}
-            startIcon={<></>}
-            loadingPosition='start'
-            type='submit'
-            fullWidth
-            variant='contained'
-            sx={{ mt: 3, mb: 2 }}
+          <Box
+            component='form'
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
           >
-            {user !== null ? 'Update User' : 'Create New User'}
-          </LoadingButton>
-        </Box>
-      </CardContent>
-    </Card>
+            <TextField
+              margin='normal'
+              required
+              fullWidth
+              id='name'
+              label='Name'
+              name='name'
+              value={name}
+              onChange={handleChange}
+            />
+            <TextField
+              margin='normal'
+              required
+              fullWidth
+              id='email'
+              label='Email'
+              name='email'
+              value={email}
+              onChange={handleChange}
+            />
+            <Box mt={2}>
+              <FormControl fullWidth>
+                <InputLabel>User Role</InputLabel>
+                <Select
+                  name='role'
+                  value={role}
+                  label='User Role'
+                  onChange={handleChange}
+                >
+                  <MenuItem value='user'>Application User</MenuItem>
+                  <MenuItem value='admin'>Application Admin</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+            {user === null && (
+              <>
+                <TextField
+                  margin='normal'
+                  required
+                  fullWidth
+                  name='password'
+                  label='Password'
+                  type='password'
+                  id='password'
+                  value={password}
+                  onChange={handleChange}
+                />
+                <TextField
+                  margin='normal'
+                  required
+                  fullWidth
+                  name='confirmPassword'
+                  label='Confirm Password'
+                  type='password'
+                  id='confirmPassword'
+                  value={confirmPassword}
+                  onChange={handleChange}
+                />
+              </>
+            )}
+
+            <LoadingButton
+              loading={isLoading}
+              startIcon={<></>}
+              loadingPosition='start'
+              type='submit'
+              fullWidth
+              variant='contained'
+              sx={{ mt: 3, mb: 2 }}
+            >
+              {user !== null ? 'Update User' : 'Create New User'}
+            </LoadingButton>
+          </Box>
+        </CardContent>
+      </Card>
+    </>
   )
 }
 

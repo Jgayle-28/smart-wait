@@ -12,7 +12,7 @@ const User = require('../models/userModel')
 // @route POST /api/users
 // @access Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body
+  const { name, email, password, role, isAdmin } = req.body
 
   if (!name || !email || !password) {
     res.status(400)
@@ -35,7 +35,13 @@ const registerUser = asyncHandler(async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, salt)
 
   // Create new app user
-  const user = await User.create({ name, email, password: hashedPassword })
+  const user = await User.create({
+    name,
+    email,
+    password: hashedPassword,
+    role,
+    isAdmin,
+  })
 
   if (user) {
     res.status(201).json({
