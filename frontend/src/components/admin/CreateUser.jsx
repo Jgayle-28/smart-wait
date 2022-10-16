@@ -17,18 +17,9 @@ import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
 import Alert from '@mui/material/Alert'
-import { Trash as TrashIcon } from 'icons/trash'
 import { useNotification } from 'hooks/useNotification'
 import { deleteUser, updateUser } from 'store/admin/adminSlice'
-
-const initialFormValues = {
-  name: '',
-  email: '',
-  role: 'user',
-  isAdmin: false,
-  password: '',
-  confirmPassword: '',
-}
+import { initialFormValues } from 'constants/users'
 
 function CreateUser({ user = null, callBack }) {
   const { isLoading } = useSelector((state) => state.auth)
@@ -144,9 +135,8 @@ function CreateUser({ user = null, callBack }) {
           )}
           {user && (
             <Button
-              startIcon={<TrashIcon fontSize='small' />}
               sx={{ mt: 2 }}
-              variant='outlined'
+              variant='text'
               color='error'
               onClick={handleUserDelete}
             >

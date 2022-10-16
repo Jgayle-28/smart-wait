@@ -1,8 +1,18 @@
+import CircularProgress from '@mui/material/CircularProgress'
+import Box from '@mui/material/Box'
+
 function Spinner() {
   return (
-    <div className='loadingSpinner-Container'>
-      <div className='loadingSpinner'></div>
-    </div>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '80vh',
+      }}
+    >
+      <CircularProgress sx={{ height: 70, width: 70 }} />
+    </Box>
   )
 }
 

@@ -1,15 +1,16 @@
-const asyncHandler = require("express-async-handler")
-const bcrypt = require("bcryptjs")
-const { generateToken, userHasPermissions } = require("../helpers/auth")
+const asyncHandler = require('express-async-handler')
+const bcrypt = require('bcryptjs')
+const { generateToken, userHasPermissions } = require('../helpers/auth')
 
-const User = require("../models/userModel")
-const Patient = require("../models/patientModel")
+const User = require('../models/userModel')
+const Patient = require('../models/patientModel')
 
 // @desc register a new patient
 // @route POST /api/patients
 // @access Private
 const registerPatient = asyncHandler(async (req, res) => {
-  const { name, email, patientDescription } = req.body
+  const { name, email, dob, phoneNumber, patientDescription, address } =
+    req.body
 
   if (!name) return
 
@@ -18,13 +19,16 @@ const registerPatient = asyncHandler(async (req, res) => {
 
   if (!user) {
     res.status(401)
-    throw new Error("User not found")
+    throw new Error('User not found')
   }
 
   const patient = await Patient.create({
     name,
     email,
+    phoneNumber,
+    dob,
     patientDescription,
+    address,
     addedBy: req.user.id,
   })
 
@@ -35,7 +39,7 @@ const registerPatient = asyncHandler(async (req, res) => {
 // @route GET /api/patients/
 // @access Private
 const getPatients = asyncHandler(async (req, res) => {
-  const patients = await Patient.find({}).populate("addedBy")
+  const patients = await Patient.find({}).populate('addedBy')
 
   if (patients) {
     res.status(200).json(patients)
@@ -50,14 +54,14 @@ const getPatients = asyncHandler(async (req, res) => {
 // @access Private
 const getCheckedInPatients = asyncHandler(async (req, res) => {
   const patients = await Patient.find({ patientCheckedIn: true }).populate(
-    "addedBy"
+    'addedBy'
   )
 
   if (patients) {
     res.status(200).json(patients)
   } else {
     res.status(400)
-    throw new Error("Error getting checked in patients")
+    throw new Error('Error getting checked in patients')
   }
 })
 
@@ -69,7 +73,7 @@ const getPatient = asyncHandler(async (req, res) => {
 
   if (!patient) {
     res.status(404)
-    throw new Error("Patient not found")
+    throw new Error('Patient not found')
   }
   res.status(200).json(patient)
 })
@@ -83,7 +87,7 @@ const updatePatient = asyncHandler(async (req, res) => {
 
   if (!patient) {
     res.status(404)
-    throw new Error("Patient not found")
+    throw new Error('Patient not found')
   }
   // Update and return new patient
   const updatedPatient = await Patient.findByIdAndUpdate(
@@ -103,12 +107,18 @@ const deletePatient = asyncHandler(async (req, res) => {
   // Make sure we have the patient
   if (!patient) {
     res.status(404)
-    throw new Error("Patient Not found")
+    throw new Error('Patient Not found')
   }
 
   // If authorized and patient is found remove the patient
   await patient.remove()
-  res.status(200).json({ success: true, message: "Patient deleted" })
+  res
+    .status(200)
+    .json({
+      success: true,
+      message: 'Patient deleted',
+      patientId: req.params.id,
+    })
 })
 
 // TODO - Create route to get all patients created by currently logged in user

@@ -15,6 +15,13 @@ export const theme = createTheme({
       defaultProps: {
         disableElevation: true,
       },
+      MuiTooltip: {
+        styleOverrides: {
+          tooltip: {
+            fontSize: '50px',
+          },
+        },
+      },
       styleOverrides: {
         root: {
           textTransform: 'none',

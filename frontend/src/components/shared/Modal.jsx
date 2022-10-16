@@ -20,7 +20,7 @@ export default function Modal({
   ...rest
 }) {
   return (
-    <div>
+    <>
       <Dialog
         open={isOpen}
         // TransitionComponent={Transition}
@@ -40,6 +40,6 @@ export default function Modal({
           <Button onClick={toggleModal}>Agree</Button>
         </DialogActions> */}
       </Dialog>
-    </div>
+    </>
   )
 }

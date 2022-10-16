@@ -1,7 +1,16 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { logoutUser } from 'store/auth/authSlice'
 import PropTypes from 'prop-types'
-import { Box, MenuItem, MenuList, Popover, Typography } from '@mui/material'
+import {
+  Box,
+  MenuItem,
+  MenuList,
+  Popover,
+  Typography,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material'
+import LogoutIcon from '@mui/icons-material/Logout'
 import { useNavigate } from 'react-router-dom'
 
 export const AccountPopover = (props) => {
@@ -53,7 +62,14 @@ export const AccountPopover = (props) => {
           },
         }}
       >
-        <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
+        <MenuItem onClick={handleSignOut}>
+          <ListItemIcon>
+            <LogoutIcon fontSize='small' />
+          </ListItemIcon>
+          <ListItemText
+            primary={<Typography variant='body1'>Logout</Typography>}
+          />
+        </MenuItem>
       </MenuList>
     </Popover>
   )

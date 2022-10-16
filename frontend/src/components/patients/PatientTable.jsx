@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import PropTypes from 'prop-types'
-import { format } from 'date-fns'
 import {
   Avatar,
   Box,
@@ -14,18 +13,31 @@ import {
   TablePagination,
   TableRow,
   Typography,
+  Tooltip,
 } from '@mui/material'
-import { PencilAlt as PencilAltIcon } from 'icons/pencil-alt'
+import { tableCellClasses } from '@mui/material/TableCell'
+import LaunchIcon from '@mui/icons-material/Launch'
 import { getInitials } from 'utils/get-initials'
 import Modal from 'components/shared/Modal'
+import { styled } from '@mui/material/styles'
+import { useNavigate } from 'react-router-dom'
+import CustomTooltip from 'components/shared/CustomTooltip'
+import { format } from 'date-fns'
 
-function PatientTable({ customers, ...rest }) {
-  const [selectedCustomerIds, setSelectedCustomerIds] = useState([])
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    color: theme.palette.common.white,
+  },
+}))
+
+function PatientTable({ patients, ...rest }) {
   const [limit, setLimit] = useState(10)
   const [page, setPage] = useState(0)
 
   const [selectedPatient, setSelectedPatient] = useState(null)
   const [userModalOpen, setUserModalOpen] = useState(false)
+
+  const navigate = useNavigate()
 
   const toggleModal = () => {
     // This clears a user if the modal is closed
@@ -41,9 +53,32 @@ function PatientTable({ customers, ...rest }) {
     setPage(newPage)
   }
 
-  const handlePatientEdit = (patient) => {
-    setSelectedPatient(patient)
-    toggleModal()
+  const handlePatientClick = (patient) => {
+    navigate(`/patients/${patient._id}`)
+  }
+
+  const getPatientDescription = (desc) => {
+    if (desc.length > 30) {
+      const tempText = `${desc.slice(0, 30)}...`
+      return (
+        <CustomTooltip
+          sx={{
+            cursor: 'pointer',
+          }}
+          title={desc}
+        >
+          <Typography color='textSecondary' variant='body2'>
+            {tempText}
+          </Typography>
+        </CustomTooltip>
+      )
+    } else {
+      return (
+        <Typography color='textSecondary' variant='body2'>
+          {desc}
+        </Typography>
+      )
+    }
   }
 
   return (
@@ -52,41 +87,31 @@ function PatientTable({ customers, ...rest }) {
         <PerfectScrollbar>
           <Box sx={{ minWidth: 1050 }}>
             <Table>
-              <TableHead>
+              <TableHead sx={{ bgcolor: 'primary.light' }}>
                 <TableRow>
-                  <TableCell padding='checkbox'>
-                    {/* <Checkbox
-                    checked={selectedCustomerIds.length === customers.length}
-                    color='primary'
-                    indeterminate={
-                      selectedCustomerIds.length > 0 &&
-                      selectedCustomerIds.length < customers.length
-                    }
-                    onChange={handleSelectAll}
-                  /> */}
-                  </TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Information</TableCell>
-                  <TableCell>Address</TableCell>
-                  <TableCell>Phone</TableCell>
-                  <TableCell>DOB</TableCell>
+                  <StyledTableCell padding='checkbox'></StyledTableCell>
+                  <StyledTableCell sx={{ color: '#fff' }}>Name</StyledTableCell>
+                  <StyledTableCell>Information</StyledTableCell>
+                  <StyledTableCell>Address</StyledTableCell>
+                  <StyledTableCell>Phone</StyledTableCell>
+                  <StyledTableCell>DOB</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {customers.slice(0, limit).map((customer) => (
+                {patients.slice(0, limit).map((patient) => (
                   <TableRow
                     hover
-                    key={customer.id}
-                    // selected={selectedCustomerIds.indexOf(customer.id) !== -1}
+                    key={patient._id}
                     sx={{
+                      cursor: 'pointer',
                       '&:hover': {
                         backgroundColor: '#F2F1FD',
                       },
                     }}
                   >
                     <TableCell>
-                      <IconButton onClick={() => handlePatientEdit(customer)}>
-                        <PencilAltIcon
+                      <IconButton onClick={() => handlePatientClick(patient)}>
+                        <LaunchIcon
                           sx={{ color: 'text.disabled' }}
                           fontSize='small'
                         />
@@ -99,40 +124,34 @@ function PatientTable({ customers, ...rest }) {
                           display: 'flex',
                         }}
                       >
-                        <Avatar
-                          src={customer.avatarUrl}
-                          sx={{ mr: 2, bgcolor: 'secondary.light' }}
-                        >
-                          {getInitials(customer.name)}
+                        <Avatar sx={{ mr: 2, bgcolor: 'secondary.light' }}>
+                          {getInitials(patient.name)}
                         </Avatar>
                         <Box sx={{ ml: 1 }}>
                           <Typography color='textPrimary' variant='subtitle2'>
-                            {customer.name}
+                            {patient.name}
                           </Typography>
                           <Typography color='textSecondary' variant='body2'>
-                            {customer.email}
+                            {patient.email}
                           </Typography>
                         </Box>
                       </Box>
                     </TableCell>
                     <TableCell>
-                      <Typography color='textSecondary' variant='body2'>
-                        Some clickable information here
+                      <Typography noWrap color='textSecondary' variant='body2'>
+                        {getPatientDescription(patient.patientDescription)}
                       </Typography>
                     </TableCell>
                     <TableCell>
                       <Typography color='textSecondary' variant='body2'>
-                        {`${customer.address.city}, ${customer.address.state}, ${customer.address.country}`}
+                        {patient.address.formattedAddress &&
+                          patient.address.formattedAddress}
                       </Typography>
                     </TableCell>
+                    <TableCell>{patient.phoneNumber}</TableCell>
                     <TableCell>
                       <Typography color='textSecondary' variant='body2'>
-                        {customer.phone}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography color='textSecondary' variant='body2'>
-                        {format(customer.createdAt, 'dd/MM/yyyy')}
+                        {format(new Date(patient.dob), 'MM/dd/yyyy')}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -143,7 +162,7 @@ function PatientTable({ customers, ...rest }) {
         </PerfectScrollbar>
         <TablePagination
           component='div'
-          count={customers.length}
+          count={patients.length}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleLimitChange}
           page={page}
@@ -166,5 +185,5 @@ function PatientTable({ customers, ...rest }) {
 export default PatientTable
 
 PatientTable.propTypes = {
-  customers: PropTypes.array.isRequired,
+  patients: PropTypes.array.isRequired,
 }

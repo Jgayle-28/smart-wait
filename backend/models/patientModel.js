@@ -14,20 +14,21 @@ const patientSchema = mongoose.Schema(
       ],
     },
     dob: {
-      type: Date,
+      type: String,
       required: false,
       default: null,
     },
     phoneNumber: {
-      type: string,
+      type: String,
       required: false,
       maxlength: [20, 'Phone number can not be longer than 20 characters'],
       default: '',
     },
     address: {
-      type: Object,
-      default: null,
-      required: [false, 'Please add an address'],
+      formattedAddress: String,
+      street: String,
+      state: String,
+      zip: String,
     },
     patientDescription: {
       type: String,
