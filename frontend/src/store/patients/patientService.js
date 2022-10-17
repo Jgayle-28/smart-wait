@@ -10,6 +10,13 @@ const getPatients = async (token) => {
   if (res.data) return res.data
 }
 
+const getCheckedInPatients = async (token) => {
+  const config = getAxiosConfig(token)
+  const res = await axios.get(`${API_URL}/checked-in`, config)
+
+  if (res.data) return res.data
+}
+
 const getPatient = async (token, patientId) => {
   const config = getAxiosConfig(token)
   const res = await axios.get(`${API_URL}/${patientId}`, config)
@@ -44,6 +51,7 @@ const deletePatient = async (token, patientId) => {
 
 const patientService = {
   getPatients,
+  getCheckedInPatients,
   getPatient,
   createPatient,
   updatePatient,

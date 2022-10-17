@@ -47,7 +47,7 @@ function Patients() {
     }
   }
 
-  if (patients === null) return <Spinner />
+  if (currentPatients === null) return <Spinner />
   return (
     <>
       <Box

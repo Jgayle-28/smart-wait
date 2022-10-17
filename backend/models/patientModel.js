@@ -41,9 +41,9 @@ const patientSchema = mongoose.Schema(
       default: false,
     },
     patientRoom: {
-      type: Number,
+      type: String,
       required: false,
-      default: null,
+      default: '',
     },
     appointments: {
       type: Array,

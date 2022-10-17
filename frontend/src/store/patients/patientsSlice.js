@@ -5,6 +5,7 @@ import { extractErrorMessage } from 'utils/auth'
 const initialState = {
   patients: null,
   patient: null,
+  checkedInPatients: null,
   isLoading: false,
 }
 
@@ -14,6 +15,18 @@ export const getPatients = createAsyncThunk(
     try {
       const token = thunkAPI.getState().auth.user.token
       return await patientService.getPatients(token)
+    } catch (error) {
+      return thunkAPI.rejectWithValue(extractErrorMessage(error))
+    }
+  }
+)
+
+export const getCheckedInPatients = createAsyncThunk(
+  'patients/getCheckedInPatients',
+  async (_, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token
+      return await patientService.getCheckedInPatients(token)
     } catch (error) {
       return thunkAPI.rejectWithValue(extractErrorMessage(error))
     }
@@ -83,6 +96,12 @@ export const patientSlice = createSlice({
       })
       .addCase(getPatients.fulfilled, (state, action) => {
         state.patients = action.payload
+      })
+      .addCase(getCheckedInPatients.pending, (state) => {
+        state.checkedInPatients = null
+      })
+      .addCase(getCheckedInPatients.fulfilled, (state, action) => {
+        state.checkedInPatients = action.payload
       })
       .addCase(getPatient.pending, (state) => {
         state.patient = null

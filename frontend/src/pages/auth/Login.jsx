@@ -50,7 +50,7 @@ function Login() {
       .unwrap()
       .then(() => {
         setFormData(initialFormValues)
-        navigate('/')
+        navigate('/dashboard')
       })
       .catch((error) =>
         setFormFeedback({

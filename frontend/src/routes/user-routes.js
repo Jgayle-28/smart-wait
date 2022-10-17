@@ -4,7 +4,7 @@ import { Users as UsersIcon } from 'icons/users'
 
 export const routes = [
   {
-    href: '/',
+    href: '/dashboard',
     icon: <ChartBarIcon fontSize='small' />,
     title: 'Dashboard',
   },

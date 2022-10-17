@@ -15,7 +15,9 @@ import SearchIcon from '@mui/icons-material/Search'
 import { Bell as BellIcon } from 'icons/bell'
 import { UserCircle as UserCircleIcon } from 'icons/user-circle'
 import { Users as UsersIcon } from 'icons/users'
-import { AccountPopover } from './account-popover'
+import { AccountPopover } from './AccountPopover'
+import SecurityIcon from '@mui/icons-material/Security'
+import { useSelector } from 'react-redux'
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -23,6 +25,7 @@ const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
 }))
 
 export const DashboardNavbar = (props) => {
+  const { user } = useSelector((state) => state.auth)
   const { onSidebarOpen, ...other } = props
   const settingsRef = useRef(null)
   const [openAccountPopover, setOpenAccountPopover] = useState(false)
@@ -88,7 +91,11 @@ export const DashboardNavbar = (props) => {
               ml: 1,
             }}
           >
-            <UserCircleIcon fontSize='small' />
+            {user.isAdmin ? (
+              <SecurityIcon fontSize='small' />
+            ) : (
+              <UserCircleIcon fontSize='small' />
+            )}
           </Avatar>
         </Toolbar>
       </DashboardNavbarRoot>
