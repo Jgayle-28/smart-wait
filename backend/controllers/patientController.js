@@ -1,6 +1,4 @@
 const asyncHandler = require('express-async-handler')
-const bcrypt = require('bcryptjs')
-const { generateToken, userHasPermissions } = require('../helpers/auth')
 
 const User = require('../models/userModel')
 const Patient = require('../models/patientModel')
@@ -112,13 +110,11 @@ const deletePatient = asyncHandler(async (req, res) => {
 
   // If authorized and patient is found remove the patient
   await patient.remove()
-  res
-    .status(200)
-    .json({
-      success: true,
-      message: 'Patient deleted',
-      patientId: req.params.id,
-    })
+  res.status(200).json({
+    success: true,
+    message: 'Patient deleted',
+    patientId: req.params.id,
+  })
 })
 
 // TODO - Create route to get all patients created by currently logged in user

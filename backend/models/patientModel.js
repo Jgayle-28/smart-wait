@@ -46,9 +46,14 @@ const patientSchema = mongoose.Schema(
       default: '',
     },
     appointments: {
-      type: Array,
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Appointment' }],
       required: false,
       default: [],
+    },
+    office: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Office',
+      required: true,
     },
     addedBy: {
       type: mongoose.Schema.Types.ObjectId,

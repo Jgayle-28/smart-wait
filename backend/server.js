@@ -1,9 +1,9 @@
-const express = require("express")
-const connectDB = require("./config/db")
-const dotenv = require("dotenv").config()
-const colors = require("colors")
+const express = require('express')
+const connectDB = require('./config/db')
+const dotenv = require('dotenv').config()
+const colors = require('colors')
 
-const { errorHandler } = require("./middleware/errorMiddleware")
+const { errorHandler } = require('./middleware/errorMiddleware')
 
 const PORT = process.env.PORT || 8000
 
@@ -20,9 +20,10 @@ app.use(express.urlencoded({ extended: false }))
 /**
  * ROUTES
  */
-app.get("/", (req, res) => res.status(200).send("Hola Amigo"))
-app.use("/api/users", require("./routes/userRoutes"))
-app.use("/api/patients", require("./routes/patientRoutes"))
+app.get('/', (req, res) => res.status(200).send('Hola Amigo'))
+app.use('/api/users', require('./routes/userRoutes'))
+app.use('/api/patients', require('./routes/patientRoutes'))
+app.use('/api/offices', require('./routes/officeRoutes'))
 
 /**
  * Middleware
