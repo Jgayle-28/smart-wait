@@ -69,6 +69,18 @@ export const updatePatient = createAsyncThunk(
   }
 )
 
+export const updateCheckedInPatient = createAsyncThunk(
+  'patients/updateCheckedInPatient',
+  async (patientData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token
+      return await patientService.updatePatient(token, patientData)
+    } catch (error) {
+      return thunkAPI.rejectWithValue(extractErrorMessage(error))
+    }
+  }
+)
+
 export const deletePatient = createAsyncThunk(
   'patients/deletePatient',
   async (patientId, thunkAPI) => {
@@ -97,9 +109,7 @@ export const patientSlice = createSlice({
       .addCase(getPatients.fulfilled, (state, action) => {
         state.patients = action.payload
       })
-      .addCase(getCheckedInPatients.pending, (state) => {
-        state.checkedInPatients = null
-      })
+
       .addCase(getCheckedInPatients.fulfilled, (state, action) => {
         state.checkedInPatients = action.payload
       })
@@ -120,6 +130,16 @@ export const patientSlice = createSlice({
       })
       .addCase(updatePatient.fulfilled, (state, action) => {
         state.patients = state.patients.map((patient) =>
+          patient._id === action.payload._id ? action.payload : patient
+        )
+        state.patient = action.payload
+        state.isLoading = false
+      })
+      .addCase(updateCheckedInPatient.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(updateCheckedInPatient.fulfilled, (state, action) => {
+        state.checkedInPatients = state.checkedInPatients.map((patient) =>
           patient._id === action.payload._id ? action.payload : patient
         )
         state.patient = action.payload

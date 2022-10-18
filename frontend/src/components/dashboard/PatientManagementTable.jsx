@@ -21,10 +21,16 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 import LaunchIcon from '@mui/icons-material/Launch'
 import TaskAltIcon from '@mui/icons-material/TaskAlt'
 import { getInitials } from 'utils/get-initials'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import {
+  getCheckedInPatients,
+  updateCheckedInPatient,
+} from 'store/patients/patientsSlice'
+import { useNotification } from 'hooks/useNotification'
 
-const roomOptions = [
+// todo get number of rooms from office and create options
+const initialRoomOptions = [
   { label: '1', value: '1' },
   { label: '2', value: '2' },
   { label: '3', value: '3' },
@@ -56,23 +62,79 @@ const WaitingBadge = styled(Badge)(({ theme }) => ({
 }))
 
 function PatientManagementTable() {
+  const [assignedRooms, setAssignedRooms] = useState([])
+  const [roomOptions, setRoomOptions] = useState(initialRoomOptions)
+
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   const { checkedInPatients } = useSelector((state) => state.patients)
+  const { displayNotification } = useNotification()
 
-  const [assignedRooms, setAssignedRooms] = useState([])
-  const [filteredRoomOptions, setFilteredRoomOptions] = useState([])
+  // Check if patients have been assigned to a room already
+  useEffect(() => {
+    if (checkedInPatients !== null) {
+      checkedInPatients.forEach((patient) => {
+        if (patient.patientRoom.length) {
+          if (!assignedRooms.includes(patient.patientRoom)) {
+            handleAssignRoom(patient.patientRoom)
+          }
+        }
+      })
+    }
+  }, [checkedInPatients, assignedRooms])
 
   const handlePatientClick = (patient) => {
     navigate(`/patients/${patient._id}`)
   }
 
-  const handlePatientComplete = (patient) => {
-    // UPDATE PATIENT
-    // TODO -> handle checking out a patient
-    // Removing checkedIn status and room
+  const assignPatientToRoom = (patient, roomNumber) => {
+    handleAssignRoom(roomNumber)
+
+    const patientData = { ...patient }
+    patientData.patientRoom = roomNumber
+
+    dispatch(updateCheckedInPatient(patientData))
+      .unwrap()
+      .then(() => {
+        displayNotification({
+          message: `Patient has been successfully assigned to room.`,
+          type: 'success',
+        })
+      })
+      .catch((error) => {
+        displayNotification({
+          type: 'error',
+          message: error,
+        })
+      })
   }
-  const handleAssignRoom = (e) => {
-    console.log('e', e)
+
+  const handlePatientComplete = (patient) => {
+    const patientData = { ...patient }
+    patientData.patientRoom = ''
+    patientData.patientCheckedIn = false
+
+    dispatch(updateCheckedInPatient(patientData))
+      .unwrap()
+      .then(() => {
+        dispatch(getCheckedInPatients())
+        displayNotification({
+          message: `Patient has visit has been successfully closed`,
+          type: 'success',
+        })
+      })
+      .catch((error) => {
+        displayNotification({
+          type: 'error',
+          message: error,
+        })
+      })
+  }
+
+  const handleAssignRoom = (roomNumber) => {
+    const tempRooms = [...assignedRooms]
+    tempRooms.push(roomNumber)
+    setAssignedRooms(tempRooms)
   }
 
   return (
@@ -80,14 +142,14 @@ function PatientManagementTable() {
       <Card sx={{ mt: 3 }}>
         <CardHeader
           title='Checked In Patients'
-          subTitle='Manage patients and their status'
+          subtitle='Manage patients and their status'
         />
         <PerfectScrollbar>
           <Box sx={{ minWidth: 1050 }}>
             <Table>
               {checkedInPatients.length ? (
                 <>
-                  <TableHead sx={{ bgcolor: 'neutral.300' }}>
+                  <TableHead sx={{ bgcolor: 'neutral.200' }}>
                     <TableRow>
                       <StyledTableCell padding='checkbox'></StyledTableCell>
                       <StyledTableCell>Name</StyledTableCell>
@@ -104,7 +166,7 @@ function PatientManagementTable() {
                         key={patient._id}
                         sx={{
                           cursor: 'pointer',
-                          '&:hover': {
+                          '&.MuiTableRow-root:hover': {
                             backgroundColor: '#F2F1FD',
                           },
                         }}
@@ -171,7 +233,9 @@ function PatientManagementTable() {
                           <TextField
                             label=''
                             name='room'
-                            onChange={handleAssignRoom}
+                            onChange={(e) =>
+                              assignPatientToRoom(patient, e.target.value)
+                            }
                             select
                             SelectProps={{ native: true }}
                             value={patient.patientRoom}

@@ -25,7 +25,7 @@ import { format } from 'date-fns'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    color: theme.palette.common.white,
+    color: theme.palette.neutral[600],
   },
 }))
 
@@ -86,10 +86,10 @@ function PatientTable({ patients, ...rest }) {
         <PerfectScrollbar>
           <Box sx={{ minWidth: 1050 }}>
             <Table>
-              <TableHead sx={{ bgcolor: 'primary.light' }}>
+              <TableHead sx={{ bgcolor: 'neutral.200' }}>
                 <TableRow>
                   <StyledTableCell padding='checkbox'></StyledTableCell>
-                  <StyledTableCell sx={{ color: '#fff' }}>Name</StyledTableCell>
+                  <StyledTableCell>Name</StyledTableCell>
                   <StyledTableCell>Information</StyledTableCell>
                   <StyledTableCell>Address</StyledTableCell>
                   <StyledTableCell>Phone</StyledTableCell>
@@ -103,7 +103,7 @@ function PatientTable({ patients, ...rest }) {
                     key={patient._id}
                     sx={{
                       cursor: 'pointer',
-                      '&:hover': {
+                      '&.MuiTableRow-root:hover': {
                         backgroundColor: '#F2F1FD',
                       },
                     }}
