@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNotification } from 'hooks/useNotification'
 import { deletePatient, updatePatient } from 'store/patients/patientsSlice'
 import { initialFormState } from 'constants/patients'
+import { formatPhoneNumber } from 'utils/formatPhoneNumber'
 
 function PatientForm() {
   const [hasNotEdited, setHasNotEdited] = useState(true)
@@ -149,7 +150,7 @@ function PatientForm() {
                     label='Phone Number'
                     name='phoneNumber'
                     onChange={handleChange}
-                    value={phoneNumber}
+                    value={formatPhoneNumber(phoneNumber)}
                   />
                 </Grid>
                 <Grid item md={6} xs={12}>

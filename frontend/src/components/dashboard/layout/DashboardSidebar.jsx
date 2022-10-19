@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Box, Divider, Drawer, Typography, useMediaQuery } from '@mui/material'
 
-import { NavItem } from 'components/dashboard/NavItem'
+import { NavItem } from 'components/dashboard/layout/NavItem'
 // Icons
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 

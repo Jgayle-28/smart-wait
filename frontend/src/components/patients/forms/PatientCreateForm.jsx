@@ -15,6 +15,7 @@ import { LoadingButton } from '@mui/lab'
 import { createPatient } from 'store/patients/patientsSlice'
 import { useNotification } from 'hooks/useNotification'
 import { initialFormState } from 'constants/patients'
+import { formatPhoneNumber } from 'utils/formatPhoneNumber'
 
 function PatientCreateForm({ toggleModal, callBack }) {
   const [formData, setFormData] = useState(initialFormState)
@@ -123,7 +124,7 @@ function PatientCreateForm({ toggleModal, callBack }) {
               label='Phone Number'
               name='phoneNumber'
               onChange={handleChange}
-              value={phoneNumber}
+              value={formatPhoneNumber(phoneNumber)}
               sx={{ mt: 2 }}
               required
             />

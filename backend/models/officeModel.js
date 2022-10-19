@@ -41,11 +41,6 @@ const officeSchema = mongoose.Schema({
     expirationDate: String,
     cvv: String,
   },
-  appointments: {
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Appointment' }],
-    default: [],
-    required: false,
-  },
   staff: {
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     default: [],

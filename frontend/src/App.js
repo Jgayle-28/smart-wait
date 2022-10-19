@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import PrivateRoute from 'components/auth/PrivateRoute'
 // pages
 import Login from 'pages/auth/Login'
+import OfficeRegister from 'pages/office/OfficeRegister'
 import DashboardLayout from 'layouts/dashboard/Dashboard'
 // Sub page -> with in dashboard layout
 import Dashboard from 'pages/dashboard/Dashboard.page'
@@ -29,6 +30,7 @@ function App() {
             </Route>
           </Route>
           <Route path='/login' element={<Login />} />
+          <Route path='/register-office' element={<OfficeRegister />} />
         </Routes>
       </Router>
     </>

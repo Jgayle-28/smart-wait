@@ -97,7 +97,7 @@ const deleteOffice = asyncHandler(async (req, res) => {
     throw new Error('Patient Not found')
   }
 
-  // If authorized and office is found remove the patient
+  // If authorized and office is found remove the office
   await office.remove()
   res.status(200).json({
     success: true,
