@@ -19,3 +19,9 @@ export const initialFormState = {
   staff: [],
   owner: '',
 }
+
+export const subscriptionLevels = [
+  { value: 'Standard', label: 'Standard' },
+  { value: 'Business', label: 'Business' },
+  { value: 'Elite', label: 'Elite' },
+]

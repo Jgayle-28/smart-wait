@@ -4,16 +4,26 @@ import StatCards from 'components/dashboard/StatCards'
 import Spinner from 'components/shared/Spinner'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { getOffice } from 'store/offices/officeSlice'
 import { getCheckedInPatients } from 'store/patients/patientsSlice'
 
 function Dashboard() {
   const dispatch = useDispatch()
+  const { user } = useSelector((state) => state.auth)
+  const { office } = useSelector((state) => state.offices)
   const { checkedInPatients } = useSelector((state) => state.patients)
 
   useEffect(() => {
     dispatch(getCheckedInPatients())
   }, [])
-  if (checkedInPatients === null) return <Spinner />
+
+  useEffect(() => {
+    if (user) {
+      dispatch(getOffice(user.office))
+      dispatch(getCheckedInPatients())
+    }
+  }, [user])
+  if (checkedInPatients === null || office === null) return <Spinner />
   return (
     <>
       <Box

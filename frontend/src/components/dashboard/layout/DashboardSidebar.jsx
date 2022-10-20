@@ -17,6 +17,7 @@ import { useEffect } from 'react'
 export const DashboardSidebar = (props) => {
   const { open, onClose } = props
   const { user } = useSelector((state) => state.auth)
+  const { office } = useSelector((state) => state.offices)
 
   const [userRoutes, setUserRoutes] = useState(routes)
 
@@ -78,12 +79,19 @@ export const DashboardSidebar = (props) => {
               }}
             >
               <div>
-                <Typography color='inherit' variant='subtitle1'>
-                  Pinal County Health
-                </Typography>
-                <Typography color='neutral.400' variant='body2'>
+                {office === null ? (
+                  <Typography color='inherit' variant='subtitle1'>
+                    ...
+                  </Typography>
+                ) : (
+                  <Typography color='inherit' variant='subtitle2'>
+                    {office.name}
+                  </Typography>
+                )}
+
+                {/* <Typography color='neutral.400' variant='body2'>
                   Office : 1
-                </Typography>
+                </Typography> */}
               </div>
               <SelectorIcon
                 sx={{

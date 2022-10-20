@@ -16,12 +16,21 @@ const registerOffice = asyncHandler(async (req, res) => {
     billing,
   } = req.body
 
-  if (!name || !email || !phoneNumber || !address || !numOfRooms || !billing) {
+  if (
+    !name ||
+    !email ||
+    !phoneNumber ||
+    !address ||
+    !numOfRooms ||
+    !subscription ||
+    !billing
+  ) {
     res.status(400)
     throw new Error(
       `Please include -> ${!name ? 'name' : ''} ${!email ? 'email' : ''} ${
         !phoneNumber ? 'phone number' : ''
       } ${!address ? 'address' : ''} ${!numOfRooms ? 'Number of rooms' : ''} 
+        ${!subscription ? 'subscription information' : ''}
         ${!billing ? 'billing information' : ''}
         `
     )
@@ -32,6 +41,8 @@ const registerOffice = asyncHandler(async (req, res) => {
     staff: [req.user.id],
     owner: req.user.id,
   })
+
+  // update user with office id
 
   res.status(201).json(office)
 })

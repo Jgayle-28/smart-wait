@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import {
   Avatar,
   Box,
-  Button,
   Card,
   Grid,
   Step,
@@ -11,25 +10,31 @@ import {
   Stepper,
   Typography,
 } from '@mui/material'
-import { Check as CheckIcon } from 'icons/check'
+
 import StepIcon from 'components/office/registration/StepIcon'
 // Steps
 import SubscriptionLevel from 'components/office/registration/SubscriptionLevel'
 import OfficeDetails from 'components/office/registration/OfficeDetails'
 import BillingInfo from 'components/office/registration/BillingInfo'
 import { initialFormState } from 'constants/office'
-import { Stack } from '@mui/system'
-import { Logo } from 'components/logo'
 import main from 'assets/img/registration/main.jpg'
+import { useDispatch, useSelector } from 'react-redux'
+import { registerOffice } from 'store/offices/officeSlice'
+import { useNotification } from 'hooks/useNotification'
+import { useNavigate } from 'react-router-dom'
+import { updateUserOffice } from 'store/auth/authSlice'
+import SuccessInfo from 'components/office/registration/SuccessInfo'
 
 function OfficeRegister() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const { displayNotification } = useNotification()
+  const { user } = useSelector((state) => state.auth)
+
   const [formData, setFormData] = useState(initialFormState)
   const [activeStep, setActiveStep] = useState(0)
   const [complete, setComplete] = useState(false)
-
-  useEffect(() => {
-    console.log('formData ::>>', formData)
-  }, [formData])
+  const [registerStepInfo, setRegisterStepInfo] = useState('')
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1)
@@ -38,9 +43,50 @@ function OfficeRegister() {
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1)
   }
+  const handleSubmit = () => {
+    setRegisterStepInfo('Registering office...')
+    const officeData = { ...formData }
+    const userData = { ...user }
+
+    officeData.address.formattedAddress = `${formData.address.street}, ${formData.address.city}, ${formData.address.zip}`
+
+    // time out for realistic feel of registration
+    setTimeout(() => {
+      dispatch(registerOffice(officeData))
+        .unwrap()
+        .then((res) => {
+          console.log('res :>> ', res)
+          // Update the user with the office id
+          setRegisterStepInfo('Updating your profile...')
+          dispatch(updateUserOffice({ ...userData, office: res._id }))
+            .unwrap()
+            .then(() => {
+              setRegisterStepInfo('Your Good to go...')
+              displayNotification({
+                message: 'Office successfully registered.',
+                type: 'success',
+              })
+              setTimeout(() => {
+                setFormData(initialFormState)
+                navigate(`/dashboard`)
+              }, 800)
+            })
+        })
+        .catch((error) =>
+          displayNotification({
+            message: `Oops, something went wrong please try again. ${error}`,
+            type: 'error',
+          })
+        )
+    }, 800)
+  }
 
   const handleComplete = () => {
     setComplete(true)
+    // time out for loader
+    setTimeout(() => {
+      handleSubmit()
+    }, 1000)
   }
 
   const handleChange = (e) => {
@@ -199,104 +245,10 @@ function OfficeRegister() {
                   </Stepper>
                 </Box>
               ) : (
-                <Box sx={{ marginTop: 12, height: '100%' }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      my: 4,
-                    }}
-                  >
-                    <Logo />
-                    <Typography component='h1' variant='h5'>
-                      Smart Wait
-                    </Typography>
-                  </Box>
-
-                  <Box display='flex' alignItems='center'>
-                    <Avatar
-                      sx={{
-                        backgroundColor: 'success.main',
-                        color: 'success.contrastText',
-                        height: 40,
-                        width: 40,
-                      }}
-                    >
-                      <CheckIcon />
-                    </Avatar>
-
-                    <Box sx={{ ml: 2 }}>
-                      <Typography variant='h6'>All done!</Typography>
-                      <Typography color='textSecondary' variant='body2'>
-                        Hang tight while we configure Smart Wait for you...
-                      </Typography>
-                    </Box>
-                  </Box>
-                  {/* Office details */}
-                  <Card
-                    sx={{
-                      alignItems: 'center',
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      mt: 2,
-                      px: 2,
-                      py: 1.5,
-                    }}
-                    variant='outlined'
-                  >
-                    <Stack spacing={1} sx={{ mr: { xs: 0, md: 5 } }}>
-                      <Typography variant='subtitle1'>
-                        {formData.name}
-                      </Typography>
-                      <Typography color='textSecondary' variant='caption'>
-                        Email: {formData.email}
-                      </Typography>
-                      <Typography
-                        color='textSecondary'
-                        noWrap
-                        variant='caption'
-                      >
-                        Phone: {formData.phoneNumber}
-                      </Typography>
-                      <Typography
-                        color='textSecondary'
-                        noWrap
-                        variant='caption'
-                      >
-                        Rooms: {formData.numOfRooms}
-                      </Typography>
-                    </Stack>
-                    <div>
-                      <Stack spacing={1}>
-                        <Typography color='textSecondary' variant='caption'>
-                          Street: {formData.address.street}
-                        </Typography>
-                        <Typography
-                          color='textSecondary'
-                          noWrap
-                          variant='caption'
-                        >
-                          City: {formData.address.city}
-                        </Typography>
-                        <Typography
-                          color='textSecondary'
-                          noWrap
-                          variant='caption'
-                        >
-                          Zip Code: {formData.address.zip}
-                        </Typography>
-                        <Typography
-                          color='textSecondary'
-                          noWrap
-                          variant='caption'
-                        >
-                          state: {formData.address.state}
-                        </Typography>
-                      </Stack>
-                    </div>
-                  </Card>
-                </Box>
+                <SuccessInfo
+                  formData={formData}
+                  registerStepInfo={registerStepInfo}
+                />
               )}
             </Box>
           </Grid>

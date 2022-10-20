@@ -2,8 +2,8 @@ import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit'
 import authService from './authService'
 import { extractErrorMessage } from 'utils/auth'
 
-// Get user from localstorage
-const user = JSON.parse(localStorage.getItem('user'))
+// Get user from local storage
+const user = JSON.parse(localStorage.getItem('sm-user'))
 
 const initialState = {
   user: user ? user : null,
@@ -27,6 +27,20 @@ export const loginUser = createAsyncThunk(
   async (user, thunkAPI) => {
     try {
       return await authService.loginUser(user)
+    } catch (error) {
+      return thunkAPI.rejectWithValue(extractErrorMessage(error))
+    }
+  }
+)
+
+// Used to update in the office for the user
+// Had to split from auth because the way that the data needs to ba handled
+export const updateUserOffice = createAsyncThunk(
+  'auth/updateUserOffice',
+  async (user, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token
+      return await authService.updateUserOffice(token, user)
     } catch (error) {
       return thunkAPI.rejectWithValue(extractErrorMessage(error))
     }
@@ -66,6 +80,13 @@ export const authSlice = createSlice({
         state.isLoading = false
       })
       .addCase(loginUser.rejected, (state) => {
+        state.isLoading = false
+      })
+      .addCase(updateUserOffice.pending, (state) => {
+        state.isLoading = false
+      })
+      .addCase(updateUserOffice.fulfilled, (state, action) => {
+        state.user = action.payload
         state.isLoading = false
       })
   },

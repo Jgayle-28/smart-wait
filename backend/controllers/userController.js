@@ -41,6 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
     password: hashedPassword,
     role,
     isAdmin,
+    office,
   })
 
   if (user) {
@@ -48,6 +49,8 @@ const registerUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      isAdmin: user.isAdmin,
+      office: user.office,
       token: generateToken(user._id),
     })
   } else {
@@ -72,6 +75,7 @@ const loginUser = asyncHandler(async (req, res) => {
       email: user.email,
       role: user.role,
       isAdmin: user.isAdmin,
+      office: user.office,
       token: generateToken(user._id),
     })
   } else {
@@ -123,6 +127,27 @@ const updateUser = asyncHandler(async (req, res) => {
   res.status(200).json(updatedUser)
 })
 
+// @desc update a user office by id
+// @route PUT /api/users/:id/update-office
+// @access Private
+const updateUserOffice = asyncHandler(async (req, res) => {
+  const { name, email, isAdmin, role, office, token } = req.body
+  // Make sure user exists
+  const user = await User.findById(req.params.id)
+
+  if (!user) {
+    res.status(404)
+    throw new Error('User not found')
+  }
+  // Update and return new patient
+  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  })
+  res
+    .status(200)
+    .json({ name, email, isAdmin, role, office, token, office, token })
+})
+
 // @desc delete user by id
 // @route DELETE /api/users/:id
 // @access Private
@@ -153,5 +178,6 @@ module.exports = {
   getUsers,
   getCurrentUser,
   updateUser,
+  updateUserOffice,
   deleteUser,
 }

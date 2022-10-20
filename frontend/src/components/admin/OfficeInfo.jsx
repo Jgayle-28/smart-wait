@@ -1,12 +1,10 @@
 import {
-  Box,
   Button,
   Card,
   CardContent,
   CardHeader,
   Divider,
   Typography,
-  TextField,
   List,
   ListItem,
   ListItemAvatar,
@@ -16,8 +14,11 @@ import { PencilAlt as PencilAltIcon } from 'icons/pencil-alt'
 import { Home as HomeIcon } from 'icons/home'
 import { Mail as MailIcon } from 'icons/mail'
 import { ClipboardList as ClipboardListIcon } from 'icons/clipboard-list'
-import { CreditCard as CreditCardIcon } from 'icons/credit-card'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import Modal from 'components/shared/Modal'
+import Spinner from 'components/shared/Spinner'
+import { useSelector } from 'react-redux'
+import EditOfficeForm from 'components/office/edit/EditOfficeForm'
 
 const profile = {
   officeLocation: '127 E Main St Ste D Payson, AZ 85541',
@@ -30,22 +31,21 @@ const profile = {
   },
 }
 
-function Billing() {
-  const [officeInfo, setOfficeInfo] = useState(profile)
-  const { officeEmail, officeLocation, officeSubscription, paymentMethod } =
-    profile
+function OfficeInfo() {
+  const { office } = useSelector((state) => state.offices)
 
-  useEffect(() => {
-    setOfficeInfo(profile)
-  }, [])
+  const [officeModalOpen, setBillingModalOpen] = useState(false)
+  const { name, email, address, subscription } = office
 
+  const toggleModal = () => {
+    setBillingModalOpen((prevState) => !prevState)
+  }
+
+  if (office === null) <Spinner />
   return (
     <>
       <Card>
-        <CardHeader
-          subheader='Current subscription, office information and billing information'
-          title='Account Information'
-        />
+        <CardHeader subheader={name} title='Account Information' />
         <Divider />
         <CardContent
           sx={{
@@ -56,7 +56,7 @@ function Billing() {
             },
           }}
         >
-          <List>
+          <List disablePadding>
             <ListItem disableGutters divider sx={{ paddingLeft: 3 }}>
               <ListItemAvatar sx={{ color: 'action.active' }}>
                 <HomeIcon fontSize='small' />
@@ -68,12 +68,11 @@ function Billing() {
                 }
                 secondary={
                   <Typography color='textSecondary' variant='body2'>
-                    {officeLocation}
+                    {address.formattedAddress}
                   </Typography>
                 }
               />
             </ListItem>
-
             <ListItem disableGutters divider sx={{ paddingLeft: 3 }}>
               <ListItemAvatar sx={{ color: 'action.active' }}>
                 <MailIcon fontSize='small' />
@@ -85,12 +84,11 @@ function Billing() {
                 }
                 secondary={
                   <Typography color='textSecondary' variant='body2'>
-                    {officeEmail}
+                    {email}
                   </Typography>
                 }
               />
             </ListItem>
-
             <ListItem disableGutters divider sx={{ paddingLeft: 3 }}>
               <ListItemAvatar sx={{ color: 'action.active' }}>
                 <ClipboardListIcon fontSize='small' />
@@ -102,27 +100,7 @@ function Billing() {
                 }
                 secondary={
                   <Typography color='textSecondary' variant='body2'>
-                    {officeSubscription}
-                  </Typography>
-                }
-              />
-            </ListItem>
-
-            <ListItem disableGutters sx={{ paddingLeft: 3 }}>
-              <ListItemAvatar sx={{ color: 'action.active' }}>
-                <CreditCardIcon fontSize='small' />
-              </ListItemAvatar>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant='subtitle2'>
-                    Payment Information:
-                  </Typography>
-                }
-                secondary={
-                  <Typography color='textSecondary' variant='body2'>
-                    <b>Card Number: </b>
-                    {paymentMethod.cardNumber}
+                    {subscription}
                   </Typography>
                 }
               />
@@ -134,12 +112,20 @@ function Billing() {
         startIcon={<PencilAltIcon fontSize='small' />}
         sx={{ mt: 2 }}
         variant='outlined'
-        // onClick={toggleModal}
+        onClick={toggleModal}
       >
         Edit account information
       </Button>
+      <Modal
+        title=''
+        isOpen={officeModalOpen}
+        toggleModal={toggleModal}
+        noPadding
+      >
+        <EditOfficeForm toggleModal={toggleModal} />
+      </Modal>
     </>
   )
 }
 
-export default Billing
+export default OfficeInfo

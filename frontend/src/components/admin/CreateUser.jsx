@@ -125,23 +125,23 @@ function CreateUser({ user = null, callBack }) {
   return (
     <>
       <Card>
-        <CardHeader subheader='Add new application users' title='Create User' />
+        <CardHeader
+          subheader={user ? '' : 'Add office personnel to Smart Wait'}
+          title={user ? 'Edit User' : 'Create User'}
+          action={
+            user && (
+              <Button variant='text' color='error' onClick={handleUserDelete}>
+                Delete user
+              </Button>
+            )
+          }
+        />
         <Divider />
         <CardContent>
           {formFeedback && (
             <Box mt={4} sx={{ width: '100%' }}>
               <Alert severity={formFeedback.type}>{formFeedback.message}</Alert>
             </Box>
-          )}
-          {user && (
-            <Button
-              sx={{ mt: 2 }}
-              variant='text'
-              color='error'
-              onClick={handleUserDelete}
-            >
-              Delete user
-            </Button>
           )}
 
           <Box
