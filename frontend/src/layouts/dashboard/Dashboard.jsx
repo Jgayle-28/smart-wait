@@ -1,10 +1,12 @@
-import { useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { DashboardNavbar } from 'components/dashboard/layout/DashboardNavbar'
 import { DashboardSidebar } from 'components/dashboard/layout/DashboardSidebar'
 import styled from '@emotion/styled'
 import { Box } from '@mui/material'
 import AuthGuard from 'components/auth/AuthGuard'
+import { useSelector } from 'react-redux'
+import NeedToRegister from 'components/dashboard/NeedToRegister'
 
 const DashboardLayoutRoot = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -17,7 +19,22 @@ const DashboardLayoutRoot = styled('div')(({ theme }) => ({
 }))
 
 function Dashboard() {
+  const navigate = useNavigate()
+  const { user } = useSelector((state) => state.auth)
+
   const [isSidebarOpen, setSidebarOpen] = useState(true)
+
+  useEffect(() => {
+    // Check for an office ID -> redirect if none
+    if (!user.office.length) {
+      setTimeout(() => {
+        navigate(`/register-office`)
+      }, 5500)
+    }
+  }, [user])
+
+  //  If the user has not registered their office
+  if (!user.office.length) return <NeedToRegister />
   return (
     <>
       <DashboardLayoutRoot>

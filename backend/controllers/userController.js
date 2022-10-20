@@ -75,7 +75,7 @@ const loginUser = asyncHandler(async (req, res) => {
       email: user.email,
       role: user.role,
       isAdmin: user.isAdmin,
-      office: user.office,
+      office: user.office ? user.office : '',
       token: generateToken(user._id),
     })
   } else {

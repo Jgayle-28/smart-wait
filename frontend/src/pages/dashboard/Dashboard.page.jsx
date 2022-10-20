@@ -9,6 +9,7 @@ import { getCheckedInPatients } from 'store/patients/patientsSlice'
 
 function Dashboard() {
   const dispatch = useDispatch()
+
   const { user } = useSelector((state) => state.auth)
   const { office } = useSelector((state) => state.offices)
   const { checkedInPatients } = useSelector((state) => state.patients)
@@ -23,6 +24,7 @@ function Dashboard() {
       dispatch(getCheckedInPatients())
     }
   }, [user])
+
   if (checkedInPatients === null || office === null) return <Spinner />
   return (
     <>
