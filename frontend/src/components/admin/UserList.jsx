@@ -25,6 +25,7 @@ import CreateUser from './CreateUser'
 
 function UserList() {
   const dispatch = useDispatch()
+  const { user } = useSelector((state) => state.auth)
   const { users } = useSelector((state) => state.admin)
 
   const [selectedUser, setSelectedUser] = useState(null)
@@ -32,11 +33,11 @@ function UserList() {
   const [userModalOpen, setUserModalOpen] = useState(false)
 
   useEffect(() => {
-    dispatch(getUsers())
-  }, [])
-
-  useEffect(() => {
-    if (users) setApplicationUsers(users)
+    if (users)
+      // Filter out super-admin from user, but keep in user list for accessability
+      setApplicationUsers(
+        users.filter((user) => !user.role.includes('super-admin'))
+      )
   }, [users])
 
   const toggleModal = () => {
@@ -46,7 +47,7 @@ function UserList() {
   }
 
   const userModalCallback = () => {
-    dispatch(getUsers())
+    dispatch(getUsers(user.office))
     toggleModal()
   }
 

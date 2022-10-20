@@ -3,9 +3,9 @@ import { getAxiosConfig } from 'utils/get-axios-config'
 
 const API_URL = `/api/users`
 
-const getUsers = async (token) => {
+const getUsers = async (token, officeId) => {
   const config = getAxiosConfig(token)
-  const res = await axios.get(API_URL, config)
+  const res = await axios.get(`${API_URL}/${officeId}`, config)
 
   if (res.data) return res.data
 }

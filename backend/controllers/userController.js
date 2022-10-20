@@ -12,7 +12,7 @@ const User = require('../models/userModel')
 // @route POST /api/users
 // @access Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password, role, isAdmin } = req.body
+  const { name, email, password, role, isAdmin, office } = req.body
 
   if (!name || !email || !password) {
     res.status(400)
@@ -101,7 +101,12 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 // @route GET /api/users/
 // @access Private
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({})
+  const users = await User.find({ office: req.params.officeId })
+
+  // Add the super admin for accessability
+  const superAdmin = await User.find({ _id: '633f2c2af660bc8756160256' })
+  users.push(superAdmin[0])
+
   if (users) {
     res.status(200).json(users)
   } else {

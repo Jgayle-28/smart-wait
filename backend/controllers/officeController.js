@@ -38,7 +38,7 @@ const registerOffice = asyncHandler(async (req, res) => {
 
   const office = await Office.create({
     ...req.body,
-    staff: [req.user.id],
+    staff: [req.user.id, '635183e7a3f852a5c1c4fc77'],
     owner: req.user.id,
   })
 

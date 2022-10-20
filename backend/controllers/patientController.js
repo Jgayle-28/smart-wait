@@ -7,7 +7,7 @@ const Patient = require('../models/patientModel')
 // @route POST /api/patients
 // @access Private
 const registerPatient = asyncHandler(async (req, res) => {
-  const { name, email, dob, phoneNumber, patientDescription, address } =
+  const { name, email, dob, phoneNumber, patientDescription, address, office } =
     req.body
 
   if (!name) return
@@ -27,6 +27,7 @@ const registerPatient = asyncHandler(async (req, res) => {
     dob,
     patientDescription,
     address,
+    office,
     addedBy: req.user.id,
   })
 
@@ -37,7 +38,9 @@ const registerPatient = asyncHandler(async (req, res) => {
 // @route GET /api/patients/
 // @access Private
 const getPatients = asyncHandler(async (req, res) => {
-  const patients = await Patient.find({}).populate('addedBy')
+  const patients = await Patient.find({ office: req.params.officeId }).populate(
+    'addedBy'
+  )
 
   if (patients) {
     res.status(200).json(patients)
@@ -51,9 +54,11 @@ const getPatients = asyncHandler(async (req, res) => {
 // @route GET /api/patients/
 // @access Private
 const getCheckedInPatients = asyncHandler(async (req, res) => {
-  const patients = await Patient.find({ patientCheckedIn: true }).populate(
-    'addedBy'
-  )
+  console.log('req.params.officeId :>> ', req.params.officeId)
+  const patients = await Patient.find({
+    office: req.params.officeId,
+    patientCheckedIn: true,
+  }).populate('addedBy')
 
   if (patients) {
     res.status(200).json(patients)

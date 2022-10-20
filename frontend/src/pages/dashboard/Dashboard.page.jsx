@@ -15,13 +15,9 @@ function Dashboard() {
   const { checkedInPatients } = useSelector((state) => state.patients)
 
   useEffect(() => {
-    dispatch(getCheckedInPatients())
-  }, [])
-
-  useEffect(() => {
     if (user) {
       dispatch(getOffice(user.office))
-      dispatch(getCheckedInPatients())
+      dispatch(getCheckedInPatients(user.office))
     }
   }, [user])
 

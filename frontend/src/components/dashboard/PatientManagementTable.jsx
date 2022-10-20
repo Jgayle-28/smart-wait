@@ -63,12 +63,25 @@ const WaitingBadge = styled(Badge)(({ theme }) => ({
 
 function PatientManagementTable() {
   const [assignedRooms, setAssignedRooms] = useState([])
-  const [roomOptions, setRoomOptions] = useState(initialRoomOptions)
+  const [roomOptions, setRoomOptions] = useState([])
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { checkedInPatients } = useSelector((state) => state.patients)
+  const { office } = useSelector((state) => state.offices)
   const { displayNotification } = useNotification()
+
+  // Create available rooms from room number in office
+  useEffect(() => {
+    if (office) {
+      const availableRooms = [...Array(parseInt(office.numOfRooms)).keys()].map(
+        (_, i) => {
+          return { label: `${i + 1}`, value: `${i + 1}` }
+        }
+      )
+      setRoomOptions(availableRooms)
+    }
+  }, [office])
 
   // Check if patients have been assigned to a room already
   useEffect(() => {

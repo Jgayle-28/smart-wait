@@ -3,16 +3,16 @@ import { getAxiosConfig } from 'utils/get-axios-config'
 
 const API_URL = `/api/patients`
 
-const getPatients = async (token) => {
+const getPatients = async (token, officeId) => {
   const config = getAxiosConfig(token)
-  const res = await axios.get(API_URL, config)
+  const res = await axios.get(`${API_URL}/${officeId}`, config)
 
   if (res.data) return res.data
 }
 
-const getCheckedInPatients = async (token) => {
+const getCheckedInPatients = async (token, officeId) => {
   const config = getAxiosConfig(token)
-  const res = await axios.get(`${API_URL}/checked-in`, config)
+  const res = await axios.get(`${API_URL}/${officeId}/checked-in`, config)
 
   if (res.data) return res.data
 }

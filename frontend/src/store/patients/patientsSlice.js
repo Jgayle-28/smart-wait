@@ -11,10 +11,10 @@ const initialState = {
 
 export const getPatients = createAsyncThunk(
   'patients/getPatients',
-  async (_, thunkAPI) => {
+  async (officeId, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token
-      return await patientService.getPatients(token)
+      return await patientService.getPatients(token, officeId)
     } catch (error) {
       return thunkAPI.rejectWithValue(extractErrorMessage(error))
     }
@@ -23,10 +23,10 @@ export const getPatients = createAsyncThunk(
 
 export const getCheckedInPatients = createAsyncThunk(
   'patients/getCheckedInPatients',
-  async (_, thunkAPI) => {
+  async (officeId, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token
-      return await patientService.getCheckedInPatients(token)
+      return await patientService.getCheckedInPatients(token, officeId)
     } catch (error) {
       return thunkAPI.rejectWithValue(extractErrorMessage(error))
     }

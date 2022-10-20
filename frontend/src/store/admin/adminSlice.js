@@ -11,10 +11,10 @@ const initialState = {
 
 export const getUsers = createAsyncThunk(
   'admin/getUsers',
-  async (_, thunkAPI) => {
+  async (officeId, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token
-      return await adminService.getUsers(token)
+      return await adminService.getUsers(token, officeId)
     } catch (error) {
       return thunkAPI.rejectWithValue(extractErrorMessage(error))
     }
@@ -48,7 +48,11 @@ export const deleteUser = createAsyncThunk(
 export const adminSlice = createSlice({
   name: 'admin',
   initialState,
-  reducers: {},
+  reducers: {
+    clearUsers(state) {
+      state.users = null
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getUsers.pending, (state) => {
@@ -76,4 +80,5 @@ export const adminSlice = createSlice({
   },
 })
 
+export const { clearUsers } = adminSlice.actions
 export default adminSlice.reducer

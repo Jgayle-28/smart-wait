@@ -23,6 +23,7 @@ import { initialFormValues } from 'constants/users'
 
 function CreateUser({ user = null, callBack }) {
   const { isLoading } = useSelector((state) => state.auth)
+  const { office } = useSelector((state) => state.offices)
   const dispatch = useDispatch()
   const { displayNotification } = useNotification()
 
@@ -64,6 +65,7 @@ function CreateUser({ user = null, callBack }) {
 
     delete userData.confirmPassword
     userData.isAdmin = userData.role === 'admin' ? true : false
+    userData.office = office._id
 
     if (user) {
       dispatch(updateUser(userData))

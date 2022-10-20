@@ -9,15 +9,16 @@ import Spinner from 'components/shared/Spinner'
 import { getPatients } from 'store/patients/patientsSlice'
 
 function Patients() {
+  const dispatch = useDispatch()
+  const { patients } = useSelector((state) => state.patients)
+  const { user } = useSelector((state) => state.auth)
+
   const [currentPatients, setCurrentPatients] = useState([])
   const [searchText, setSearchText] = useState('')
   const [patientModalOpen, setPatientModalOpen] = useState(false)
-  const { patients } = useSelector((state) => state.patients)
-
-  const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(getPatients())
+    dispatch(getPatients(user.office))
   }, [])
 
   useEffect(() => {

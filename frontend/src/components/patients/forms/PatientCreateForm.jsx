@@ -18,15 +18,16 @@ import { initialFormState } from 'constants/patients'
 import { formatPhoneNumber } from 'utils/formatPhoneNumber'
 
 function PatientCreateForm({ toggleModal, callBack }) {
+  const dispatch = useDispatch()
+  const { isLoading } = useSelector((state) => state.patients)
+  const { user } = useSelector((state) => state.auth)
+  const { displayNotification } = useNotification()
+
   const [formData, setFormData] = useState(initialFormState)
   const [formFeedback, setFormFeedback] = useState(null)
 
   const { name, email, phoneNumber, patientDescription, address, dob } =
     formData
-
-  const { isLoading } = useSelector((state) => state.patients)
-  const { displayNotification } = useNotification()
-  const dispatch = useDispatch()
 
   useEffect(() => {
     // Reset the form feed back if any Errors
@@ -67,6 +68,7 @@ function PatientCreateForm({ toggleModal, callBack }) {
       formattedAddress: `${address.street} ${address.state}`,
       ...address,
     }
+    newPatient.office = user.office
 
     dispatch(createPatient(newPatient))
       .unwrap()
