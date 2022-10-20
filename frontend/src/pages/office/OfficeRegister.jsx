@@ -50,6 +50,9 @@ function OfficeRegister() {
 
     officeData.address.formattedAddress = `${formData.address.street}, ${formData.address.city}, ${formData.address.zip}`
 
+    // Need to create and process stripe payment
+    setRegisterStepInfo('Processing your payment securely using Stripe...')
+
     // time out for realistic feel of registration
     setTimeout(() => {
       dispatch(registerOffice(officeData))

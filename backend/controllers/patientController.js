@@ -35,7 +35,7 @@ const registerPatient = asyncHandler(async (req, res) => {
 })
 
 // @desc get all patients
-// @route GET /api/patients/
+// @route GET /api/patients/:officeId
 // @access Private
 const getPatients = asyncHandler(async (req, res) => {
   const patients = await Patient.find({ office: req.params.officeId }).populate(

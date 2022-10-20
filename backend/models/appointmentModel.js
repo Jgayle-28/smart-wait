@@ -20,6 +20,11 @@ const appointmentModel = mongoose.Schema({
     ref: 'Patient',
     required: true,
   },
+  addedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
 })
 
 module.exports = mongoose.model('Appointment', appointmentModel)
