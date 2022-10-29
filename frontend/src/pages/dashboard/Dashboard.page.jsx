@@ -4,6 +4,7 @@ import StatCards from 'components/dashboard/StatCards'
 import Spinner from 'components/shared/Spinner'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { getAppointmentsByDate } from 'store/appointments/appointmentSlice'
 import { getOffice } from 'store/offices/officeSlice'
 import { getCheckedInPatients } from 'store/patients/patientsSlice'
 
@@ -12,6 +13,7 @@ function Dashboard() {
 
   const { user } = useSelector((state) => state.auth)
   const { office } = useSelector((state) => state.offices)
+  const { dailyOfficeAppointments } = useSelector((state) => state.appointments)
   const { checkedInPatients } = useSelector((state) => state.patients)
 
   useEffect(() => {
@@ -20,6 +22,14 @@ function Dashboard() {
       dispatch(getCheckedInPatients(user.office))
     }
   }, [user])
+
+  useEffect(() => {
+    if (office && dailyOfficeAppointments === null) {
+      dispatch(
+        getAppointmentsByDate({ officeId: office._id, date: new Date() })
+      )
+    }
+  }, [office, dailyOfficeAppointments])
 
   if (checkedInPatients === null || office === null) return <Spinner />
   return (

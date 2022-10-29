@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux'
 
 function StatCards() {
   const { checkedInPatients } = useSelector((state) => state.patients)
+  const { dailyOfficeAppointments } = useSelector((state) => state.appointments)
 
   // Calculate totals
   const patientsNotInRoom = checkedInPatients
@@ -32,13 +33,15 @@ function StatCards() {
       }, 0)
     : 0
 
+  const totalAppointments = dailyOfficeAppointments?.length || [].length
+
   return (
     <>
       <Grid item lg={3} sm={6} xl={3} xs={12}>
         <StatCard
           label='Patients Waiting'
           icon={<PeopleIcon />}
-          iconColor='error.main'
+          iconColor='warning.main'
           stat={patientsNotInRoom}
         />
       </Grid>
@@ -46,7 +49,7 @@ function StatCards() {
         <StatCard
           label='Patients In Rooms'
           icon={<HowToRegIcon />}
-          iconColor='success.main'
+          iconColor='secondary.light'
           stat={patientsInRoom}
         />
       </Grid>
@@ -55,14 +58,14 @@ function StatCards() {
           label='Appointments Today'
           icon={<MoneyIcon />}
           iconColor='primary.main'
-          stat='30'
+          stat={totalAppointments}
         />
       </Grid>
       <Grid item xl={3} lg={3} sm={6} xs={12}>
         <StatCard
           label='Patients Seen'
           icon={<VerifiedIcon />}
-          iconColor='warning.main'
+          iconColor='info.main'
           stat='26' // appointmentTotal -
         />
       </Grid>

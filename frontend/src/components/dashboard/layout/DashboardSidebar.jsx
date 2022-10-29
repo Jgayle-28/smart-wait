@@ -7,7 +7,8 @@ import { NavItem } from 'components/dashboard/layout/NavItem'
 // Icons
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 
-import { Selector as SelectorIcon } from 'icons/selector'
+// import { Selector as SelectorIcon } from 'icons/selector'
+import { OfficeBuilding as OfficeBuildingIcon } from 'icons/office-building'
 
 import { Logo } from 'components/logo'
 import { routes } from 'routes/user-routes'
@@ -72,19 +73,30 @@ export const DashboardSidebar = (props) => {
                 backgroundColor: 'rgba(255, 255, 255, 0.04)',
                 cursor: 'pointer',
                 display: 'flex',
-                justifyContent: 'space-between',
                 px: 3,
                 py: '11px',
                 borderRadius: 1,
               }}
             >
+              <OfficeBuildingIcon
+                fontSize='small'
+                sx={{ width: 14, height: 14 }}
+              />
               <div>
                 {office === null ? (
-                  <Typography color='inherit' variant='subtitle1'>
+                  <Typography
+                    color='inherit'
+                    variant='subtitle1'
+                    sx={{ ml: 1 }}
+                  >
                     ...
                   </Typography>
                 ) : (
-                  <Typography color='inherit' variant='subtitle2'>
+                  <Typography
+                    color='inherit'
+                    variant='subtitle2'
+                    sx={{ ml: 1 }}
+                  >
                     {office.name}
                   </Typography>
                 )}
@@ -93,13 +105,14 @@ export const DashboardSidebar = (props) => {
                   Office : 1
                 </Typography> */}
               </div>
-              <SelectorIcon
+              {/* TODO -> make this visible if the owner has more than one office */}
+              {/* <SelectorIcon
                 sx={{
                   color: 'neutral.500',
                   width: 14,
                   height: 14,
                 }}
-              />
+              /> */}
             </Box>
           </Box>
         </div>
@@ -130,7 +143,7 @@ export const DashboardSidebar = (props) => {
         open
         PaperProps={{
           sx: {
-            backgroundColor: 'neutral.900',
+            backgroundColor: '#181134',
             color: '#FFFFFF',
             width: 280,
           },
@@ -149,7 +162,7 @@ export const DashboardSidebar = (props) => {
       open={open}
       PaperProps={{
         sx: {
-          backgroundColor: 'neutral.900',
+          backgroundColor: '#181134',
           color: '#FFFFFF',
           width: 280,
         },

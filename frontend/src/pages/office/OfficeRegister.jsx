@@ -58,7 +58,6 @@ function OfficeRegister() {
       dispatch(registerOffice(officeData))
         .unwrap()
         .then((res) => {
-          console.log('res :>> ', res)
           // Update the user with the office id
           setRegisterStepInfo('Updating your profile...')
           dispatch(updateUserOffice({ ...userData, office: res._id }))

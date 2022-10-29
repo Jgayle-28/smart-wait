@@ -109,6 +109,7 @@ function PatientForm() {
   const handleNavigateBack = () => {
     navigate(`/patients/${id}`, { replace: true })
   }
+
   return (
     <>
       <Box

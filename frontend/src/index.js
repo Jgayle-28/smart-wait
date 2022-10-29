@@ -7,6 +7,7 @@ import reportWebVitals from './reportWebVitals'
 // Theme and styles
 import { ThemeProvider } from '@mui/material/styles'
 import { theme } from 'theme'
+import 'react-calendar/dist/Calendar.css'
 import './index.css'
 import Notifications from 'components/shared/notifications/Notifications'
 

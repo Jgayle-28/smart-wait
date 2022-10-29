@@ -7,7 +7,7 @@ import DashboardLayout from 'layouts/dashboard/Dashboard'
 // Sub page -> with in dashboard layout
 import Dashboard from 'pages/dashboard/Dashboard.page'
 import Admin from 'pages/admin/Admin.page'
-import Appointments from 'pages/appointments/Appointment.page'
+import Appointments from 'pages/appointments/Appointments.page'
 import Patients from 'pages/patients/Patients.page'
 import Patient from 'pages/patients/Patient.page'
 import Settings from 'pages/settings/Settings.page'

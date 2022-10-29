@@ -10,6 +10,10 @@ const appointmentModel = mongoose.Schema({
     enum: ['well-check', 'sick-check', 'concern-check'],
     required: true,
   },
+  appointmentDetails: {
+    type: String,
+    default: '',
+  },
   office: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Office',

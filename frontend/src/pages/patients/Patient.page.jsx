@@ -19,7 +19,7 @@ function Patient() {
 
   useEffect(() => {
     dispatch(getPatient(id))
-    return () => dispatch(clearPatient())
+    // return () => dispatch(clearPatient())
   }, [])
 
   // Catches the edit in the route to toggle edit

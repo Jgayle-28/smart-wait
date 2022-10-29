@@ -1,4 +1,6 @@
 const asyncHandler = require('express-async-handler')
+const endOfDay = require('date-fns/endOfDay')
+const startOfDay = require('date-fns/startOfDay')
 
 const Appointment = require('../models/appointmentModel')
 
@@ -6,13 +8,29 @@ const Appointment = require('../models/appointmentModel')
 // @route POST /api/appointments
 // @access Private
 const createAppointment = asyncHandler(async (req, res) => {
-  const { appointmentDate, appointmentType, office, patient } = req.body
+  const {
+    appointmentDate,
+    appointmentType,
+    appointmentDetails,
+    office,
+    patient,
+  } = req.body
 
-  if (!appointmentDate || !appointmentDate || !office || !patient) return
+  if (
+    !appointmentDate ||
+    !appointmentDate ||
+    !appointmentDetails ||
+    !office ||
+    !patient
+  ) {
+    res.status(400)
+    throw new Error(`Please make sure all fields are being sent`)
+  }
 
   const appointment = await Appointment.create({
     appointmentDate,
     appointmentType,
+    appointmentDetails,
     office,
     patient,
     addedBy: req.user.id,
@@ -25,7 +43,21 @@ const createAppointment = asyncHandler(async (req, res) => {
 // @route GET /api/appointments/:officeId
 // @access Private
 const getAppointments = asyncHandler(async (req, res) => {
-  const appointments = await Appointment.find({ office: req.params.officeId })
+  let reqParams
+  if (Object.keys(req.query).length > 0) {
+    reqParams = {
+      office: req.params.officeId,
+      appointmentDate: {
+        $gte: startOfDay(new Date(req.query.date)),
+        $lte: endOfDay(new Date(req.query.date)),
+      },
+    }
+  } else {
+    reqParams = {
+      office: req.params.officeId,
+    }
+  }
+  const appointments = await Appointment.find(reqParams).populate('patient')
 
   if (appointments) {
     res.status(200).json(appointments)
@@ -39,7 +71,9 @@ const getAppointments = asyncHandler(async (req, res) => {
 // @route GET /api/appointments/:id
 // @access Private
 const getAppointment = asyncHandler(async (req, res) => {
-  const appointment = await Appointment.findById(req.params.id)
+  const appointment = await Appointment.findById(req.params.id).populate(
+    'patient'
+  )
 
   if (!appointment) {
     res.status(404)

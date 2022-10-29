@@ -54,7 +54,6 @@ const getPatients = asyncHandler(async (req, res) => {
 // @route GET /api/patients/
 // @access Private
 const getCheckedInPatients = asyncHandler(async (req, res) => {
-  console.log('req.params.officeId :>> ', req.params.officeId)
   const patients = await Patient.find({
     office: req.params.officeId,
     patientCheckedIn: true,

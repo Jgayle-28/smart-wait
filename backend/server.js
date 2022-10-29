@@ -24,6 +24,7 @@ app.get('/', (req, res) => res.status(200).send('Hola Amigo'))
 app.use('/api/users', require('./routes/userRoutes'))
 app.use('/api/patients', require('./routes/patientRoutes'))
 app.use('/api/offices', require('./routes/officeRoutes'))
+app.use('/api/appointments', require('./routes/appointmentRoutes'))
 
 /**
  * Middleware
