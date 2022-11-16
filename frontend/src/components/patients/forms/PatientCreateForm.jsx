@@ -16,6 +16,7 @@ import { createPatient } from 'store/patients/patientsSlice'
 import { useNotification } from 'hooks/useNotification'
 import { initialFormState } from 'constants/patients'
 import { formatPhoneNumber } from 'utils/formatPhoneNumber'
+import { nanoid } from 'nanoid'
 
 function PatientCreateForm({ toggleModal, callBack }) {
   const dispatch = useDispatch()
@@ -69,6 +70,8 @@ function PatientCreateForm({ toggleModal, callBack }) {
       ...address,
     }
     newPatient.office = user.office
+    // This ID is used to find patient on check-in
+    newPatient.uniquePatientId = nanoid()
 
     dispatch(createPatient(newPatient))
       .unwrap()

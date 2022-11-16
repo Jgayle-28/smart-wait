@@ -2,8 +2,10 @@ import { Box, Container, Grid } from '@mui/material'
 import PatientManagementTable from 'components/dashboard/PatientManagementTable'
 import StatCards from 'components/dashboard/StatCards'
 import Spinner from 'components/shared/Spinner'
+import { format } from 'date-fns'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { generateAnalytics } from 'store/analytics/analyticSlice'
 import { getAppointmentsByDate } from 'store/appointments/appointmentSlice'
 import { getOffice } from 'store/offices/officeSlice'
 import { getCheckedInPatients } from 'store/patients/patientsSlice'
@@ -15,6 +17,20 @@ function Dashboard() {
   const { office } = useSelector((state) => state.offices)
   const { dailyOfficeAppointments } = useSelector((state) => state.appointments)
   const { checkedInPatients } = useSelector((state) => state.patients)
+  const { analytic } = useSelector((state) => state.analytics)
+
+  const today = format(new Date(), 'MM/dd/yyyy')
+
+  // Check for the days analytics
+  // This is done on the dashboard because the stat card uses the data
+  useEffect(() => {
+    if (
+      analytic === null ||
+      format(new Date(analytic.date), 'MM/dd/yyyy') !== today
+    ) {
+      dispatch(generateAnalytics({ date: new Date(), office: user.office }))
+    }
+  }, [analytic, office, user])
 
   useEffect(() => {
     if (user) {

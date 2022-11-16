@@ -13,6 +13,7 @@ const router = express.Router()
 router.post('/', protectRoute, createAppointment)
 router.get('/:officeId', protectRoute, getAppointments)
 router.get('/appointment/:id', protectRoute, getAppointment)
+router.post('/patient-appointment/:id', getAppointment)
 router.put('/:id', protectRoute, updateAppointment)
 router.delete('/:id', protectRoute, deleteAppointment)
 

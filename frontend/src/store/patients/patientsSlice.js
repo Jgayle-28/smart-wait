@@ -3,9 +3,10 @@ import patientService from './patientService'
 import { extractErrorMessage } from 'utils/auth'
 
 const initialState = {
-  patients: null,
-  patient: null,
-  checkedInPatients: null,
+  patients: null, // Used on patients page
+  patient: null, // used on patients page -> single patient view
+  checkedInPatients: null, // Used for dashboard
+  checkedInPatient: null, // Used for patients checking in
   isLoading: false,
 }
 
@@ -45,12 +46,35 @@ export const getPatient = createAsyncThunk(
   }
 )
 
+export const getCheckedInPatient = createAsyncThunk(
+  'patients/getCheckedInPatient',
+  async (uniquePatientId, thunkAPI) => {
+    try {
+      return await patientService.getCheckedInPatient(uniquePatientId)
+    } catch (error) {
+      return thunkAPI.rejectWithValue(extractErrorMessage(error))
+    }
+  }
+)
+
 export const createPatient = createAsyncThunk(
   'patients/createPatient',
   async (patientData, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token
       return await patientService.createPatient(token, patientData)
+    } catch (error) {
+      return thunkAPI.rejectWithValue(extractErrorMessage(error))
+    }
+  }
+)
+
+export const checkInPatient = createAsyncThunk(
+  'patients/checkInPatient',
+  async (patientData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token
+      return await patientService.updatePatient(token, patientData)
     } catch (error) {
       return thunkAPI.rejectWithValue(extractErrorMessage(error))
     }
@@ -100,6 +124,9 @@ export const patientSlice = createSlice({
     clearPatient(state) {
       state.patient = null
     },
+    clearCheckedInPatient(state) {
+      state.checkedInPatient = null
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -109,7 +136,6 @@ export const patientSlice = createSlice({
       .addCase(getPatients.fulfilled, (state, action) => {
         state.patients = action.payload
       })
-
       .addCase(getCheckedInPatients.fulfilled, (state, action) => {
         state.checkedInPatients = action.payload
       })
@@ -118,6 +144,19 @@ export const patientSlice = createSlice({
       })
       .addCase(getPatient.fulfilled, (state, action) => {
         state.patient = action.payload
+      })
+      .addCase(getCheckedInPatient.pending, (state) => {
+        state.checkedInPatient = null
+      })
+      .addCase(getCheckedInPatient.fulfilled, (state, action) => {
+        state.checkedInPatient = action.payload
+      })
+      .addCase(checkInPatient.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(checkInPatient.fulfilled, (state, action) => {
+        state.checkedInPatient = action.payload
+        state.isLoading = false
       })
       .addCase(createPatient.fulfilled, (state, action) => {
         state.patients = [...state.patients, action.payload]
@@ -154,5 +193,5 @@ export const patientSlice = createSlice({
   },
 })
 
-export const { clearPatient } = patientSlice.actions
+export const { clearPatient, clearCheckedInPatient } = patientSlice.actions
 export default patientSlice.reducer

@@ -28,16 +28,9 @@ import {
   updateCheckedInPatient,
 } from 'store/patients/patientsSlice'
 import { useNotification } from 'hooks/useNotification'
-
-// todo get number of rooms from office and create options
-const initialRoomOptions = [
-  { label: '1', value: '1' },
-  { label: '2', value: '2' },
-  { label: '3', value: '3' },
-  { label: '4', value: '4' },
-  { label: '5', value: '5' },
-  { label: '6', value: '6' },
-]
+import { generateAnalytics } from 'store/analytics/analyticSlice'
+import { updateAppointment } from 'store/appointments/appointmentSlice'
+import useSocket from 'hooks/useSocket'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -67,9 +60,27 @@ function PatientManagementTable() {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const { analytic } = useSelector((state) => state.analytics)
   const { checkedInPatients } = useSelector((state) => state.patients)
   const { office } = useSelector((state) => state.offices)
+  const { officeAppointments } = useSelector((state) => state.appointments)
   const { displayNotification } = useNotification()
+
+  const { socket } = useSocket(office)
+
+  useEffect(() => {
+    if (socket) {
+      console.log('---- IN DASHBOARD CHECK ----')
+      socket.on('OFFICE_PATIENT_CHECK_IN', (patientData) => {
+        console.log('Got OFFICE_PATIENT_CHECK_IN message')
+        displayNotification({
+          message: `New patient ${patientData.name} has checked in.`,
+          type: 'info',
+        })
+        dispatch(getCheckedInPatients(office._id))
+      })
+    }
+  }, [socket])
 
   // Create available rooms from room number in office
   useEffect(() => {
@@ -113,6 +124,7 @@ function PatientManagementTable() {
           message: `Patient has been successfully assigned to room.`,
           type: 'success',
         })
+        socket.emit('OFFICE_ASSIGN_PATIENT_ROOM', patientData)
       })
       .catch((error) => {
         displayNotification({
@@ -123,14 +135,39 @@ function PatientManagementTable() {
   }
 
   const handlePatientComplete = (patient) => {
-    const patientData = { ...patient }
+    // create updated patient data
+    const patientData = { ...patient, office: office._id }
     patientData.patientRoom = ''
     patientData.patientCheckedIn = false
+    patientData.currentAppointment = null
+
+    // Get the appointment that was just completed by matching the patient with the appointment for the day
+    const appointment = officeAppointments.filter(
+      (app) => app.patient._id === patient._id
+    )
+
+    // create updated analytics data
+    // TODO -> Need to create Utils to generate averageWaitTime & averageAppointmentTime
+    const analyticData = {
+      ...analytic,
+      patientsSeen: [patient._id, ...analytic.patientsSeen],
+      appointmentsCompleted: [
+        appointment[0]._id,
+        ...analytic.appointmentsCompleted,
+      ],
+    }
 
     dispatch(updateCheckedInPatient(patientData))
       .unwrap()
       .then(() => {
-        dispatch(getCheckedInPatients())
+        dispatch(generateAnalytics(analyticData))
+        dispatch(
+          updateAppointment({
+            _id: patient.currentAppointment,
+            checkOutTime: new Date(),
+          })
+        )
+        dispatch(getCheckedInPatients(office._id))
         displayNotification({
           message: `Patient has visit has been successfully closed`,
           type: 'success',

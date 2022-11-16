@@ -45,6 +45,11 @@ const patientSchema = mongoose.Schema(
       required: false,
       default: '',
     },
+    uniquePatientId: { type: String, required: true },
+    currentAppointment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Appointment',
+    },
     office: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Office',

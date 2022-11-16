@@ -57,7 +57,7 @@ function PatientTable({ patients, ...rest }) {
   }
 
   const getPatientDescription = (desc) => {
-    if (desc.length > 30) {
+    if (desc?.length > 30) {
       const tempText = `${desc.slice(0, 30)}...`
       return (
         <CustomTooltip

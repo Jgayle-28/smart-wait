@@ -14,6 +14,9 @@ const appointmentModel = mongoose.Schema({
     type: String,
     default: '',
   },
+  checkInTime: { type: Date },
+  roomAssignTime: { type: Date },
+  checkOutTime: { type: Date },
   office: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Office',

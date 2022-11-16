@@ -7,8 +7,16 @@ const Patient = require('../models/patientModel')
 // @route POST /api/patients
 // @access Private
 const registerPatient = asyncHandler(async (req, res) => {
-  const { name, email, dob, phoneNumber, patientDescription, address, office } =
-    req.body
+  const {
+    name,
+    email,
+    dob,
+    phoneNumber,
+    patientDescription,
+    address,
+    office,
+    uniquePatientId,
+  } = req.body
 
   if (!name) return
 
@@ -28,6 +36,7 @@ const registerPatient = asyncHandler(async (req, res) => {
     patientDescription,
     address,
     office,
+    uniquePatientId,
     addedBy: req.user.id,
   })
 
@@ -72,6 +81,20 @@ const getCheckedInPatients = asyncHandler(async (req, res) => {
 // @access Private
 const getPatient = asyncHandler(async (req, res) => {
   const patient = await Patient.findById(req.params.id)
+
+  if (!patient) {
+    res.status(404)
+    throw new Error('Patient not found')
+  }
+  res.status(200).json(patient)
+})
+
+// @desc get a patient by email -> patient check in page
+// @route GET /api/patient-check-in
+// @access Public
+const getCheckedInPatient = asyncHandler(async (req, res) => {
+  const { uniquePatientId } = req.body
+  const patient = await Patient.findOne({ uniquePatientId })
 
   if (!patient) {
     res.status(404)
@@ -127,6 +150,7 @@ module.exports = {
   registerPatient,
   getPatients,
   getCheckedInPatients,
+  getCheckedInPatient,
   getPatient,
   updatePatient,
   deletePatient,

@@ -21,7 +21,9 @@
     "jsonwebtoken": "^8.5.1",
     "material-ui-popup-state": "^4.1.0",
     "mongoose": "^6.6.5",
-    "react-calendar": "^3.9.0"
+    "nanoid": "^4.0.0",
+    "react-calendar": "^3.9.0",
+    "socket.io": "^4.5.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"

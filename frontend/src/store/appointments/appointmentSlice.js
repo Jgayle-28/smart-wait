@@ -63,8 +63,32 @@ export const getAppointment = createAsyncThunk(
   }
 )
 
+// Public facing -> used to get appointment on patient check-in
+export const PatientGetAppointment = createAsyncThunk(
+  'appointments/getAppointment',
+  async (appId, thunkAPI) => {
+    try {
+      return await appointmentService.PatientGetAppointment(appId)
+    } catch (error) {
+      return thunkAPI.rejectWithValue(extractErrorMessage(error))
+    }
+  }
+)
+
 export const updateAppointment = createAsyncThunk(
   'appointments/updateAppointment',
+  async (appointment, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token
+      return await appointmentService.updateAppointment(token, appointment)
+    } catch (error) {
+      return thunkAPI.rejectWithValue(extractErrorMessage(error))
+    }
+  }
+)
+
+export const updateAppointmentCheckIn = createAsyncThunk(
+  'appointments/updateAppointmentCheckIn',
   async (appointment, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token
@@ -124,6 +148,13 @@ export const appointmentSlice = createSlice({
         state.officeAppointments = state.officeAppointments.map((appointment) =>
           appointment._id === action.payload._id ? action.payload : appointment
         )
+        state.isLoading = false
+      })
+      .addCase(updateAppointmentCheckIn.pending, (state, action) => {
+        state.isLoading = true
+      })
+      .addCase(updateAppointmentCheckIn.fulfilled, (state, action) => {
+        state.officeAppointments = action.payload
         state.isLoading = false
       })
     // .addCase(deleteAppointment.fulfilled, (state, action) => {

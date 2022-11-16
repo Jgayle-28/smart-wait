@@ -31,6 +31,12 @@ const getAppointment = async (token, appId) => {
   if (res.data) return res.data
 }
 
+const PatientGetAppointment = async (appId) => {
+  const res = await axios.post(`${API_URL}/patient-appointment/${appId}`)
+
+  if (res.data) return res.data
+}
+
 const updateAppointment = async (token, appointment) => {
   const config = getAxiosConfig(token)
   const res = await axios.put(
@@ -54,6 +60,7 @@ const appointmentService = {
   getAppointments,
   getAppointmentsByDate,
   getAppointment,
+  PatientGetAppointment,
   updateAppointment,
   deleteAppointment,
 }

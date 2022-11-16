@@ -17,23 +17,28 @@ import { useSelector } from 'react-redux'
 function StatCards() {
   const { checkedInPatients } = useSelector((state) => state.patients)
   const { dailyOfficeAppointments } = useSelector((state) => state.appointments)
+  const { analytic } = useSelector((state) => state.analytics)
 
   // Calculate totals
-  const patientsNotInRoom = checkedInPatients
-    ? checkedInPatients.reduce((acc, patient) => {
-        patient.patientRoom.length === 0 && acc++
-        return acc
-      }, 0)
-    : 0
+  const patientsNotInRoom =
+    checkedInPatients.length && checkedInPatients
+      ? checkedInPatients.reduce((acc, patient) => {
+          patient.patientRoom.length === 0 && acc++
+          return acc
+        }, 0)
+      : 0
 
-  const patientsInRoom = checkedInPatients
-    ? checkedInPatients.reduce((acc, patient) => {
-        patient.patientRoom.length > 0 && acc++
-        return acc
-      }, 0)
-    : 0
+  const patientsInRoom =
+    checkedInPatients.length && checkedInPatients
+      ? checkedInPatients.reduce((acc, patient) => {
+          patient.patientRoom.length > 0 && acc++
+          return acc
+        }, 0)
+      : 0
 
   const totalAppointments = dailyOfficeAppointments?.length || [].length
+
+  const totalPatientsSeen = analytic?.patientsSeen.length
 
   return (
     <>
@@ -66,7 +71,7 @@ function StatCards() {
           label='Patients Seen'
           icon={<VerifiedIcon />}
           iconColor='info.main'
-          stat='26' // appointmentTotal -
+          stat={totalPatientsSeen}
         />
       </Grid>
     </>

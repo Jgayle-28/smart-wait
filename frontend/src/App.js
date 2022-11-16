@@ -11,6 +11,7 @@ import Appointments from 'pages/appointments/Appointments.page'
 import Patients from 'pages/patients/Patients.page'
 import Patient from 'pages/patients/Patient.page'
 import Settings from 'pages/settings/Settings.page'
+import PatientCheckIn from 'pages/check-in/PatientCheckIn.page'
 
 function App() {
   return (
@@ -31,6 +32,10 @@ function App() {
           </Route>
           <Route path='/login' element={<Login />} />
           <Route path='/register-office' element={<OfficeRegister />} />
+          <Route
+            path='/check-in/:appId/:uniquePatientId'
+            element={<PatientCheckIn />}
+          />
         </Routes>
       </Router>
     </>
