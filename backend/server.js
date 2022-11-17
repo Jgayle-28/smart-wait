@@ -70,6 +70,12 @@ io.on('connection', (socket) => {
     socket.to(patientData._id).emit('OFFICE_ASSIGN_ROOM', patientData)
   })
 
+  // Office completing the patient visit
+  socket.on('OFFICE_COMPLETE_PATIENT_VISIT', (patientData) => {
+    console.log('I am in the complete visit socket 🏷️'.bgGray, patientData)
+    socket.to(patientData._id).emit('OFFICE_COMPLETE_VISIT', patientData)
+  })
+
   socket.off('SET_UP', () => {
     console.log('USER DISCONNECTED')
     socket.leave(userData._id)

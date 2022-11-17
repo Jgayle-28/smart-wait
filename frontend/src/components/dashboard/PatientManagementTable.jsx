@@ -141,18 +141,13 @@ function PatientManagementTable() {
     patientData.patientCheckedIn = false
     patientData.currentAppointment = null
 
-    // Get the appointment that was just completed by matching the patient with the appointment for the day
-    const appointment = officeAppointments.filter(
-      (app) => app.patient._id === patient._id
-    )
-
     // create updated analytics data
     // TODO -> Need to create Utils to generate averageWaitTime & averageAppointmentTime
     const analyticData = {
       ...analytic,
-      patientsSeen: [patient._id, ...analytic.patientsSeen],
+      patientsSeen: [patientData._id, ...analytic.patientsSeen],
       appointmentsCompleted: [
-        appointment[0]._id,
+        patient.currentAppointment, // Use patient because we reset in patientData
         ...analytic.appointmentsCompleted,
       ],
     }
@@ -163,10 +158,11 @@ function PatientManagementTable() {
         dispatch(generateAnalytics(analyticData))
         dispatch(
           updateAppointment({
-            _id: patient.currentAppointment,
+            _id: patientData.currentAppointment,
             checkOutTime: new Date(),
           })
         )
+        socket.emit('OFFICE_COMPLETE_PATIENT_VISIT', patientData)
         dispatch(getCheckedInPatients(office._id))
         displayNotification({
           message: `Patient has visit has been successfully closed`,

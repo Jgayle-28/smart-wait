@@ -36,6 +36,7 @@ function PatientCheckIn() {
   useEffect(() => {
     if (socket) {
       console.log('---- IN PATIENT CHECK ----')
+      // When a room has been assigned
       socket.on('OFFICE_ASSIGN_ROOM', (patientData) => {
         console.log('Got OFFICE_ASSIGN_ROOM message')
         displayNotification({
@@ -44,7 +45,19 @@ function PatientCheckIn() {
         })
         setCheckInStatus({
           type: 'info',
-          message: `You have been assigned to room ${patientData.patientRoom}.`,
+          message: `Great News! You have been assigned to room ${patientData.patientRoom}, please proceed to your room.`,
+        })
+      })
+      // When a visit has been completed
+      socket.on('OFFICE_COMPLETE_VISIT', (patientData) => {
+        console.log('Got OFFICE_COMPLETE_VISIT message')
+        displayNotification({
+          message: `Your visit has been completed.`,
+          type: 'success',
+        })
+        setCheckInStatus({
+          type: 'success',
+          message: `Your visit is now complete. We hope you enjoyed the care you received today, please leave a review and share 🙂`,
         })
       })
     }
