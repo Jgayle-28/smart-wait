@@ -27,14 +27,14 @@ export const routes = [
     icon: <QueryStatsIcon fontSize='small' />,
     title: 'Analytics',
   },
-  {
-    href: '/chat',
-    icon: <ChatAlt2Icon fontSize='small' />,
-    title: 'Chat',
-  },
-  {
-    href: '/settings',
-    icon: <CogIcon fontSize='small' />,
-    title: 'Settings',
-  },
+  // {
+  //   href: '/chat',
+  //   icon: <ChatAlt2Icon fontSize='small' />,
+  //   title: 'Chat',
+  // },
+  // {
+  //   href: '/settings',
+  //   icon: <CogIcon fontSize='small' />,
+  //   title: 'Settings',
+  // },
 ]

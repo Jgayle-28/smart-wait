@@ -95,7 +95,7 @@ function Appointment() {
           py: 8,
         }}
       >
-        <Container maxWidth='lg'>
+        <Container maxWidth={false}>
           <Box>
             <Box sx={{ m: -1 }}>
               <Typography sx={{ m: 1 }} variant='h4'>

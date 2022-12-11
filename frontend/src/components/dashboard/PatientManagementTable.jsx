@@ -70,9 +70,7 @@ function PatientManagementTable() {
 
   useEffect(() => {
     if (socket) {
-      console.log('---- IN DASHBOARD CHECK ----')
       socket.on('OFFICE_PATIENT_CHECK_IN', (patientData) => {
-        console.log('Got OFFICE_PATIENT_CHECK_IN message')
         displayNotification({
           message: `New patient ${patientData.name} has checked in.`,
           type: 'info',

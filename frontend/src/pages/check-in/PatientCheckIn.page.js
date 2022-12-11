@@ -35,10 +35,8 @@ function PatientCheckIn() {
 
   useEffect(() => {
     if (socket) {
-      console.log('---- IN PATIENT CHECK ----')
       // When a room has been assigned
       socket.on('OFFICE_ASSIGN_ROOM', (patientData) => {
-        console.log('Got OFFICE_ASSIGN_ROOM message')
         displayNotification({
           message: `You have been assigned to a room.`,
           type: 'info',
@@ -49,8 +47,7 @@ function PatientCheckIn() {
         })
       })
       // When a visit has been completed
-      socket.on('OFFICE_COMPLETE_VISIT', (patientData) => {
-        console.log('Got OFFICE_COMPLETE_VISIT message')
+      socket.on('OFFICE_COMPLETE_VISIT', () => {
         displayNotification({
           message: `Your visit has been completed.`,
           type: 'success',
@@ -80,7 +77,6 @@ function PatientCheckIn() {
   // Get the appointment from checked in patient
   useEffect(() => {
     if (appId && appointment === null) {
-      console.log('in office check')
       dispatch(PatientGetAppointment(appId))
     }
   }, [appId, appointment])

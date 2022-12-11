@@ -164,8 +164,8 @@ export const theme = createTheme({
     },
     divider: '#E6E8F0',
     primary: {
-      main: '#1F74E9',
-      // main: '#5B4BBE',
+      // main: '#1F74E9',
+      main: '#5B4BBE',
       light: '#828DF8',
       dark: '#3832A0',
       contrastText: '#FFFFFF',

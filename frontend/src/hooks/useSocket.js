@@ -7,10 +7,6 @@ function useSocket(userData) {
   const [connected, setConnected] = useState(false)
   const [socket, setSocket] = useState(null)
 
-  console.log('END_POINT :>> ', END_POINT)
-  console.log('socket :>> ', socket)
-  console.log('connected :>> ', connected)
-
   useEffect(() => {
     const tempSocket = io.connect(END_POINT)
     if (userData !== null) {

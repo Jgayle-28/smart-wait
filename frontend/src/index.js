@@ -4,12 +4,15 @@ import { Provider } from 'react-redux'
 import { store } from 'store/store'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
+import { registerChartJs } from 'utils/register-chart-js'
+import Notifications from 'components/shared/notifications/Notifications'
 // Theme and styles
 import { ThemeProvider } from '@mui/material/styles'
 import { theme } from 'theme'
 import 'react-calendar/dist/Calendar.css'
 import './index.css'
-import Notifications from 'components/shared/notifications/Notifications'
+
+registerChartJs()
 
 const container = document.getElementById('root')
 const root = createRoot(container)

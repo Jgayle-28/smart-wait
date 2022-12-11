@@ -12,6 +12,7 @@ import Patients from 'pages/patients/Patients.page'
 import Patient from 'pages/patients/Patient.page'
 import Settings from 'pages/settings/Settings.page'
 import PatientCheckIn from 'pages/check-in/PatientCheckIn.page'
+import Analytics from 'pages/analytics/Analytics.page'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
               <Route path='/patients/:id' element={<Patient />} />
               <Route path='/patients/:id/edit' element={<Patient />} />
               <Route path='/appointments' element={<Appointments />} />
+              <Route path='/analytics' element={<Analytics />} />
               <Route path='/settings' element={<Settings />} />
               <Route path='/admin' element={<Admin />} />
             </Route>
