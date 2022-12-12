@@ -59,12 +59,41 @@ const generateAnalytics = asyncHandler(async (req, res) => {
       { $new: true }
     )
   } else {
+    // Create a new analytic
     analytic = await Analytics.create(analyticObj)
   }
 
   res.status(201).json(analytic)
 })
 
+// @desc get all analytics for an office based on date
+// @route GET /api/analytics/:officeId
+// @access Private
+const getAnalytics = asyncHandler(async (req, res) => {
+  let reqParams
+  if (Object.keys(req.query).length > 0) {
+    reqParams = {
+      office: req.params.officeId,
+      date: {
+        $gte: startOfDay(new Date(req.query.startDate)),
+        $lte: endOfDay(new Date(req.query.endDate)),
+      },
+    }
+  }
+
+  const analytics = await Analytics.find(reqParams).populate(
+    'appointmentsCompleted'
+  )
+
+  if (analytics) {
+    res.status(200).json(analytics)
+  } else {
+    res.status(400)
+    throw new Error(`Error fetching analytics, please try again`)
+  }
+})
+
 module.exports = {
   generateAnalytics,
+  getAnalytics,
 }

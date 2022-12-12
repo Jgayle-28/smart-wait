@@ -4,6 +4,7 @@ import { extractErrorMessage } from 'utils/auth'
 
 const initialState = {
   analytic: null,
+  officeAnalytics: null,
   isLoading: false,
 }
 
@@ -13,6 +14,19 @@ export const generateAnalytics = createAsyncThunk(
     try {
       const token = thunkAPI.getState().auth.user.token
       return await analyticService.generateAnalytics(token, analyticData)
+    } catch (error) {
+      return thunkAPI.rejectWithValue(extractErrorMessage(error))
+    }
+  }
+)
+
+export const getAnalytics = createAsyncThunk(
+  'getAnalytics',
+  async (data, thunkAPI) => {
+    console.log('data', data)
+    try {
+      const token = thunkAPI.getState().auth.user.token
+      return await analyticService.getAnalytics(token, data)
     } catch (error) {
       return thunkAPI.rejectWithValue(extractErrorMessage(error))
     }
@@ -34,6 +48,12 @@ export const analyticSlice = createSlice({
       })
       .addCase(generateAnalytics.fulfilled, (state, action) => {
         state.analytic = action.payload
+      })
+      .addCase(getAnalytics.pending, (state) => {
+        state.officeAnalytics = null
+      })
+      .addCase(getAnalytics.fulfilled, (state, action) => {
+        state.officeAnalytics = action.payload
       })
   },
 })

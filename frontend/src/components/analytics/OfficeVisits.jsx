@@ -1,15 +1,17 @@
 import { Bar } from 'react-chartjs-2'
 import {
   Box,
-  Button,
   Card,
   CardContent,
   CardHeader,
   Divider,
   useTheme,
 } from '@mui/material'
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
-import ArrowRightIcon from '@mui/icons-material/ArrowRight'
+import {
+  monthFilterLabels,
+  weekFilterLabels,
+  yearFilterLabels,
+} from 'constants/analytics'
 
 function OfficeVisits(props) {
   const { selectedFilterOption } = props
@@ -44,7 +46,7 @@ function OfficeVisits(props) {
       //   maxBarThickness: 10,
       // },
     ],
-    labels: ['1 Aug', '2 Aug', '3 Aug', '4 Aug', '5 Aug', '6 Aug', '7 aug'],
+    labels: yearFilterLabels,
   }
 
   const options = {

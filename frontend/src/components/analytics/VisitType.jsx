@@ -32,7 +32,7 @@ function VisitType(props) {
   }
 
   const options = {
-    animation: false,
+    animation: true,
     cutoutPercentage: 80,
     layout: { padding: 0 },
     legend: {

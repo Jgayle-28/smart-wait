@@ -10,6 +10,17 @@ const generateAnalytics = async (token, analyticData) => {
   if (res.data) return res.data
 }
 
-const analyticService = { generateAnalytics }
+const getAnalytics = async (token, data) => {
+  const { officeId, dateParams } = data
+  const config = getAxiosConfig(token)
+  const res = await axios.get(
+    `${API_URL}/${officeId}?startDate=${dateParams.startDate}&endDate=${dateParams.endDate}`,
+    config
+  )
+
+  if (res.data) return res.data
+}
+
+const analyticService = { generateAnalytics, getAnalytics }
 
 export default analyticService
