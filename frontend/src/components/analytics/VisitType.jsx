@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { Doughnut } from 'react-chartjs-2'
 import {
   Box,
@@ -8,20 +10,45 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import LaptopMacIcon from '@mui/icons-material/LaptopMac'
-import PhoneIcon from '@mui/icons-material/Phone'
-import TabletIcon from '@mui/icons-material/Tablet'
 import SpaIcon from '@mui/icons-material/Spa'
 import SickIcon from '@mui/icons-material/Sick'
 import CrisisAlertIcon from '@mui/icons-material/CrisisAlert'
+import EmptyState from 'components/shared/EmptyState'
 
 function VisitType(props) {
   const theme = useTheme()
+  const { officeAnalytics } = useSelector((state) => state.analytics)
+
+  const [analyticData, setAnalyticData] = useState([1, 1, 1])
+  const [initialLoad, setInitialLoad] = useState(true)
+
+  useEffect(() => {
+    generateAnalyticData()
+  }, [officeAnalytics])
+
+  const generateAnalyticData = () => {
+    let well = 0
+    let sick = 0
+    let concern = 0
+    if (officeAnalytics !== null) {
+      officeAnalytics.forEach((analytic) => {
+        if (analytic.appointmentsCompleted.length) {
+          analytic.appointmentsCompleted.forEach((app) => {
+            if (app.appointmentType === 'well-check') well++
+            if (app.appointmentType === 'sick-check') sick++
+            if (app.appointmentType === 'concern-check') sick++
+          })
+        }
+      })
+    }
+    setAnalyticData([well, sick, concern])
+    console.log('{well, sick, concern} :>> ', { well, sick, concern })
+  }
 
   const data = {
     datasets: [
       {
-        data: [63, 15, 22],
+        data: analyticData,
         backgroundColor: ['#14B8A6', '#e53935', '#FB8C00'],
         borderWidth: 8,
         borderColor: '#FFFFFF',
@@ -53,22 +80,22 @@ function VisitType(props) {
     },
   }
 
-  const devices = [
+  const visitTypeData = [
     {
       title: 'Well',
-      value: 63,
+      value: analyticData[0],
       icon: SpaIcon,
       color: '#14B8A6',
     },
     {
       title: 'Sick',
-      value: 15,
+      value: analyticData[1],
       icon: SickIcon,
       color: '#E53935',
     },
     {
       title: 'Concern',
-      value: 23,
+      value: analyticData[2],
       icon: CrisisAlertIcon,
       color: '#FB8C00',
     },
@@ -94,7 +121,7 @@ function VisitType(props) {
             pt: 2,
           }}
         >
-          {devices.map(({ color, icon: Icon, title, value }) => (
+          {visitTypeData.map(({ color, icon: Icon, title, value }) => (
             <Box
               key={title}
               sx={{

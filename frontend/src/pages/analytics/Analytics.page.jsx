@@ -19,7 +19,6 @@ import {
 function Analytics() {
   const dispatch = useDispatch()
   const { office } = useSelector((state) => state.offices)
-  const { officeAnalytics } = useSelector((state) => state.analytics)
 
   const [selectedFilterOption, setSelectedFilterOption] = useState(
     analyticsFilterOptions.THIS_WEEK
@@ -27,9 +26,13 @@ function Analytics() {
 
   useEffect(() => {
     getFilteredAnalytics()
+  }, [])
+
+  useEffect(() => {
+    getFilteredAnalytics()
   }, [selectedFilterOption])
 
-  const getFilteredAnalytics = () => {
+  const getFilteredAnalytics = async () => {
     const dateParams = {
       startDate: getStartDate(),
       endDate: getEndDate(),
